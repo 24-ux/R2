@@ -19,16 +19,16 @@ uint8_t pump2_state = 0;     // 泵2开合（PE14）
 // 消抖锁
 uint8_t ch5_lock = 0;
 
-void weapon_init(void)
-{
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
-	
-	  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500); //直立位置
+//void weapon_init(void)
+//{
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
+//	
+//	  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500); //直立位置
 
-}
+//}
 
 
 /**
