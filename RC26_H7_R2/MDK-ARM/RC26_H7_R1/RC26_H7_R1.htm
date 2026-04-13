@@ -3,7 +3,7 @@
 <title>Static Call Graph - [RC26_H7_R1\RC26_H7_R1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image RC26_H7_R1\RC26_H7_R1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Apr 12 13:04:50 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Mon Apr 13 14:18:35 2026
 <BR><P>
 <H3>Maximum Stack Usage =        376 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -697,8 +697,8 @@ Global Symbols
 <LI><a href="#[1b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[1c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
-<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PCD_MspInit
 <LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Init
+<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PCD_MspInit
 </UL>
 
 <P><STRONG><a name="[25c]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
@@ -780,12 +780,12 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[bf]"></a>BaseModule_ClearError</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, global.o(i.BaseModule_ClearError))
-<BR>[Address Reference Count : 2]<UL><LI> motor.o(i.MotorModule_Create)
-<LI> structure.o(i.StructureModule_Create)
+<BR>[Address Reference Count : 2]<UL><LI> structure.o(i.StructureModule_Create)
+<LI> motor.o(i.MotorModule_Create)
 </UL>
 <P><STRONG><a name="[be]"></a>BaseModule_GetState</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, global.o(i.BaseModule_GetState))
-<BR>[Address Reference Count : 2]<UL><LI> motor.o(i.MotorModule_Create)
-<LI> structure.o(i.StructureModule_Create)
+<BR>[Address Reference Count : 2]<UL><LI> structure.o(i.StructureModule_Create)
+<LI> motor.o(i.MotorModule_Create)
 </UL>
 <P><STRONG><a name="[1bc]"></a>BaseModule_Init</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, global.o(i.BaseModule_Init))
 <BR><BR>[Called By]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StructureModule_Init
@@ -797,14 +797,14 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[bd]"></a>BaseModule_Stop</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, global.o(i.BaseModule_Stop))
-<BR>[Address Reference Count : 2]<UL><LI> motor.o(i.MotorModule_Create)
-<LI> structure.o(i.StructureModule_Create)
+<BR>[Address Reference Count : 2]<UL><LI> structure.o(i.StructureModule_Create)
+<LI> motor.o(i.MotorModule_Create)
 </UL>
 <P><STRONG><a name="[1b]"></a>BusFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32h7xx_it.o(i.BusFault_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32h723xx.o(RESET)
 </UL>
 <P><STRONG><a name="[b9]"></a>Can_Task</STRONG> (Thumb, 174 bytes, Stack size 16 bytes, can_task.o(i.Can_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Can_Task &rArr; manual_lift_function &rArr; DJIset_motor_data &rArr; HAL_FDCAN_AddMessageToTxFifoQ &rArr; FDCAN_CopyMessageToRAM
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = Can_Task &rArr; manual_kfs_function &rArr; DJIset_motor_data &rArr; HAL_FDCAN_AddMessageToTxFifoQ &rArr; FDCAN_CopyMessageToRAM
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelGetSysTimerCount
@@ -850,9 +850,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PID_Init
 <LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MotorModule_Create
 </UL>
-<BR>[Called By]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
-<LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lift_Init
+<BR>[Called By]<UL><LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lift_Init
 <LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kfs_Init
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 </UL>
 
 <P><STRONG><a name="[e1]"></a>DJIset_motor_data</STRONG> (Thumb, 114 bytes, Stack size 72 bytes, dji_motor.o(i.DJIset_motor_data))
@@ -862,6 +862,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Can_Task
 <LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_lift_function
+<LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_kfs_function
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_chassis_function
 </UL>
 
@@ -1013,8 +1014,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Structue_Init
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USB_SetCurrentMode
 <LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kfs_Init
+<LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USB_SetCurrentMode
 </UL>
 
 <P><STRONG><a name="[d9]"></a>HAL_FDCAN_ActivateNotification</STRONG> (Thumb, 158 bytes, Stack size 12 bytes, stm32h7xx_hal_fdcan.o(i.HAL_FDCAN_ActivateNotification))
@@ -1198,9 +1199,9 @@ Global Symbols
 <P><STRONG><a name="[1af]"></a>HAL_GPIO_WritePin</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32h7xx_hal_gpio.o(i.HAL_GPIO_WritePin))
 <BR><BR>[Called By]<UL><LI><a href="#[1fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;weapon_init
 <LI><a href="#[1ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
-<LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage
+<LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage_nominal_open
+<LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage_nominal_open
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;clamp_use
-<LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage
 </UL>
 
 <P><STRONG><a name="[fa]"></a>HAL_GetTick</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32h7xx_hal.o(i.HAL_GetTick))
@@ -2078,13 +2079,13 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
 <P><STRONG><a name="[1bf]"></a>Structue_Init</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, register.o(i.Structue_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Structue_Init &rArr; Chassis_Init &rArr; DJImotor_Create &rArr; MotorModule_Create
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Structue_Init &rArr; Lift_Init &rArr; DJImotor_Create &rArr; MotorModule_Create
 </UL>
 <BR>[Calls]<UL><LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
-<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 <LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Weapon_Init
 <LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lift_Init
 <LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kfs_Init
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -2092,9 +2093,9 @@ Global Symbols
 <P><STRONG><a name="[ea]"></a>StructureModule_Create</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, structure.o(i.StructureModule_Create))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = StructureModule_Create
 </UL>
-<BR>[Called By]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
-<LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lift_Init
+<BR>[Called By]<UL><LI><a href="#[1a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lift_Init
 <LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Kfs_Init
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Chassis_Init
 </UL>
 
 <P><STRONG><a name="[c3]"></a>StructureModule_Run</STRONG> (Thumb, 14 bytes, Stack size 16 bytes, structure.o(i.StructureModule_Run))
@@ -2281,7 +2282,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_LL_StallEP
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_SetFeature
+<BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Setup
+<LI><a href="#[1f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_SetFeature
 <LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_SetConfig
 <LI><a href="#[1f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_SetAddress
 <LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_GetStatus
@@ -2291,7 +2293,6 @@ Global Symbols
 <LI><a href="#[1ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_StdItfReq
 <LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_StdEPReq
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_StdDevReq
-<LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Setup
 </UL>
 
 <P><STRONG><a name="[1d2]"></a>USBD_CtlPrepareRx</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, usbd_ioreq.o(i.USBD_CtlPrepareRx))
@@ -2315,11 +2316,11 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_LL_Transmit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_GetStatus
+<BR>[Called By]<UL><LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Setup
+<LI><a href="#[1dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_GetStatus
 <LI><a href="#[1db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_GetDescriptor
 <LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_GetConfig
 <LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_StdEPReq
-<LI><a href="#[f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Setup
 </UL>
 
 <P><STRONG><a name="[1d5]"></a>USBD_CtlSendStatus</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, usbd_ioreq.o(i.USBD_CtlSendStatus))
@@ -2519,8 +2520,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PCD_EP_Open
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_Get_USB_Status
 </UL>
-<BR>[Called By]<UL><LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_LL_Reset
-<LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Init
+<BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Init
+<LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_LL_Reset
 </UL>
 
 <P><STRONG><a name="[1d0]"></a>USBD_LL_PrepareReceive</STRONG> (Thumb, 48 bytes, Stack size 32 bytes, usbd_conf.o(i.USBD_LL_PrepareReceive))
@@ -2529,12 +2530,12 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PCD_EP_Receive
 <LI><a href="#[1e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_Get_USB_Status
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CtlPrepareRx
+<BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Init
+<LI><a href="#[1d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CtlPrepareRx
 <LI><a href="#[1d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CtlReceiveStatus
 <LI><a href="#[1d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CtlContinueRx
 <LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_LL_DataInStage
 <LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_ReceivePacket
-<LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USBD_CDC_Init
 </UL>
 
 <P><STRONG><a name="[161]"></a>USBD_LL_Reset</STRONG> (Thumb, 108 bytes, Stack size 16 bytes, usbd_core.o(i.USBD_LL_Reset))
@@ -2980,8 +2981,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Can_Task
 </UL>
 
-<P><STRONG><a name="[e5]"></a>manual_kfs_function</STRONG> (Thumb, 608 bytes, Stack size 24 bytes, kfs.o(i.manual_kfs_function))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = manual_kfs_function
+<P><STRONG><a name="[e5]"></a>manual_kfs_function</STRONG> (Thumb, 592 bytes, Stack size 32 bytes, kfs.o(i.manual_kfs_function))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = manual_kfs_function &rArr; DJIset_motor_data &rArr; HAL_FDCAN_AddMessageToTxFifoQ &rArr; FDCAN_CopyMessageToRAM
+</UL>
+<BR>[Calls]<UL><LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DJIset_motor_data
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Can_Task
 </UL>
@@ -2998,7 +3001,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[e3]"></a>manual_weapon_function</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, weapon.o(i.manual_weapon_function))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = manual_weapon_function &rArr; sucker4_use &rArr; pump2_two_suckers_linkage
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = manual_weapon_function &rArr; sucker4_use &rArr; pump2_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Calls]<UL><LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker4_use
 <LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker3_use
@@ -3058,13 +3061,22 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
 
-<P><STRONG><a name="[23d]"></a>pump1_two_suckers_linkage</STRONG> (Thumb, 112 bytes, Stack size 16 bytes, weapon.o(i.pump1_two_suckers_linkage))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = pump1_two_suckers_linkage
+<P><STRONG><a name="[23d]"></a>pump1_two_suckers_linkage_nominal_open</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, weapon.o(i.pump1_two_suckers_linkage_nominal_open))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = pump1_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 </UL>
 <BR>[Called By]<UL><LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker2_use
 <LI><a href="#[207]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker1_use
+</UL>
+
+<P><STRONG><a name="[23e]"></a>pump2_two_suckers_linkage_nominal_open</STRONG> (Thumb, 194 bytes, Stack size 16 bytes, weapon.o(i.pump2_two_suckers_linkage_nominal_open))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = pump2_two_suckers_linkage_nominal_open
+</UL>
+<BR>[Calls]<UL><LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
+</UL>
+<BR>[Called By]<UL><LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker4_use
+<LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker3_use
 </UL>
 
 <P><STRONG><a name="[23f]"></a>pvPortMalloc</STRONG> (Thumb, 306 bytes, Stack size 24 bytes, heap_4.o(i.pvPortMalloc))
@@ -3087,33 +3099,33 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[207]"></a>sucker1_use</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, weapon.o(i.sucker1_use))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker1_use &rArr; pump1_two_suckers_linkage
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker1_use &rArr; pump1_two_suckers_linkage_nominal_open
 </UL>
-<BR>[Calls]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage
+<BR>[Calls]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_weapon_function
 </UL>
 
 <P><STRONG><a name="[208]"></a>sucker2_use</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, weapon.o(i.sucker2_use))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker2_use &rArr; pump1_two_suckers_linkage
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker2_use &rArr; pump1_two_suckers_linkage_nominal_open
 </UL>
-<BR>[Calls]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage
+<BR>[Calls]<UL><LI><a href="#[23d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump1_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_weapon_function
 </UL>
 
 <P><STRONG><a name="[209]"></a>sucker3_use</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, weapon.o(i.sucker3_use))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker3_use &rArr; pump2_two_suckers_linkage
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker3_use &rArr; pump2_two_suckers_linkage_nominal_open
 </UL>
-<BR>[Calls]<UL><LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage
+<BR>[Calls]<UL><LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_weapon_function
 </UL>
 
 <P><STRONG><a name="[20a]"></a>sucker4_use</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, weapon.o(i.sucker4_use))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker4_use &rArr; pump2_two_suckers_linkage
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = sucker4_use &rArr; pump2_two_suckers_linkage_nominal_open
 </UL>
-<BR>[Calls]<UL><LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage
+<BR>[Calls]<UL><LI><a href="#[23e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pump2_two_suckers_linkage_nominal_open
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_weapon_function
 </UL>
@@ -3299,7 +3311,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
 </UL>
 
-<P><STRONG><a name="[1fe]"></a>weapon_init</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, weapon.o(i.weapon_init))
+<P><STRONG><a name="[1fe]"></a>weapon_init</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, weapon.o(i.weapon_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = weapon_init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -3982,15 +3994,6 @@ Local Symbols
 </UL>
 <P><STRONG><a name="[205]"></a>fabsf</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lift.o(i.fabsf))
 <BR><BR>[Called By]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;manual_lift_function
-</UL>
-
-<P><STRONG><a name="[23e]"></a>pump2_two_suckers_linkage</STRONG> (Thumb, 114 bytes, Stack size 16 bytes, weapon.o(i.pump2_two_suckers_linkage))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = pump2_two_suckers_linkage
-</UL>
-<BR>[Calls]<UL><LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
-</UL>
-<BR>[Called By]<UL><LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker4_use
-<LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sucker3_use
 </UL>
 
 <P><STRONG><a name="[1bb]"></a>rc_bit_minmax_decode</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, motion_task.o(i.rc_bit_minmax_decode))

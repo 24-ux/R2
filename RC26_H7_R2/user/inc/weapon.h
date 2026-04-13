@@ -26,5 +26,8 @@ void pump1_use(void);
 void pump2_use(void);
 void pump1_two_suckers_linkage(uint8_t sucker1_on, uint8_t sucker2_on);
 void pump2_two_suckers_linkage(uint8_t sucker3_on, uint8_t sucker4_on);
+void pump1_two_suckers_linkage_nominal_open(uint8_t sucker1_on, uint8_t sucker2_on);
+void pump2_two_suckers_linkage_nominal_open(uint8_t sucker3_on, uint8_t sucker4_on);
+
 
 #endif

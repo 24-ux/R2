@@ -42,9 +42,9 @@
 
 // main_lift
 #define MAIN_LIFT_OFFSET1    0.0f
-#define MAIN_LIFT_OFFSET2    -3.0f
+#define MAIN_LIFT_OFFSET2    -6.0f
 #define MAIN_LIFT_OFFSET3    -6.0f
-#define MAIN_LIFT_OFFSET4    -9.0f
+#define MAIN_LIFT_OFFSET4    -6.0f
 
 // kfs_spin 
 #define KFS_SPIN_OFFSET1     0.7f

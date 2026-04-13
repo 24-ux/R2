@@ -19,7 +19,7 @@ Kfs_spin_position kfs_spin_position;
 Main_lift_position main_lift_position;
 
 //上电初始位置
-float main_lift_Initpos = 0.0f;
+float main_lift_Initpos = 0.2f;
 float kfs_spin_Initpos = 0.0f;
 float three_kfs_Initpos = 1.6f;
 
@@ -110,18 +110,18 @@ float tar_3k;
 	/* [原逻辑] 三个kfs：固定 MIT 增益（停用临时调参后恢复为此写法） */
 	three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.5f, 0.2f, 0.2f);
 	
-//通道三控制主升机构升降
-	static uint16_t ch3_prev = 0;
-	
-	if (RCctrl.CH3 == CH3_HIGH && ch3_prev != CH3_HIGH)
-	{
-		main_lift_position = (Main_lift_position)(((int)main_lift_position + 1) % 4);	
-	}	
-	if (RCctrl.CH3 == CH3_LOW && ch3_prev != CH3_LOW)
-	{
-		main_lift_position = (Main_lift_position)(((int)main_lift_position - 1+4) % 4);	
-	}
-	ch3_prev = RCctrl.CH3;
+////通道三控制主升机构升降
+//	static uint16_t ch3_prev = 0;
+//	
+//	if (RCctrl.CH3 == CH3_HIGH && ch3_prev != CH3_HIGH)
+//	{
+//		main_lift_position = (Main_lift_position)(((int)main_lift_position + 1) % 4);	
+//	}	
+//	if (RCctrl.CH3 == CH3_LOW && ch3_prev != CH3_LOW)
+//	{
+//		main_lift_position = (Main_lift_position)(((int)main_lift_position - 1+4) % 4);	
+//	}
+//	ch3_prev = RCctrl.CH3;
 
 
 //float tar_lift;
@@ -129,24 +129,24 @@ float tar_3k;
 //	{
 //		case main_lift_p1:
 //			tar_lift = MAIN_LIFT_OFFSET1;
-//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, -0.2, 0.05f, -0.5f);
+//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.0f, 0.0f, 0.0f);
 //		break;
 //		case main_lift_p2:
 //			tar_lift = MAIN_LIFT_OFFSET2;
-//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, -0.2, 0.05f, -2.0f);
+//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.30f, 0.025f, -2.0f);
 //		break;
 //		case main_lift_p3:
 //			tar_lift = MAIN_LIFT_OFFSET3;
-//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, -1.0, 0.05f, -2.0f);
+//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.20f, 0.025f, -2.0f);
 //		break;
 //		case main_lift_p4:
 //			tar_lift = MAIN_LIFT_OFFSET4;
-//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, -1.0, 0.05f, -4.0f);
+//			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.10f, 0.025f, -2.0f);
 //		break;		
 //		default: tar_lift = main_lift_Initpos;
-	}
+//	}
 //	main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.2, 0.15f, -5.0f);
-//	main_lift.set_mit_data(&main_lift, 0, 1.0, 0, 0.2, (988-RCctrl.CH3)/100);
+	main_lift.set_mit_data(&main_lift, 0, (992-RCctrl.CH3)/150, 0, 0.3, -1.0);
 				
 //通道四控制前臂kfs旋转
 	/* ---------- [临时调参·新增] kfs_spin：CH5 置高边沿 + 防抖，循环切换多套 {KP,KD,T} ---------- */
@@ -220,22 +220,22 @@ float tar_spin;
 //通道二控制伸缩
 	
 	// CH5切换控制电机
-// 	if (RCctrl.CH5 == CH5_LOW && ch5_prev != CH5_LOW)
-// 	{
-// 		kfs_motor_select = !kfs_motor_select;
-// 	}
-// 	ch5_prev = RCctrl.CH5;
+ 	if (RCctrl.CH5 == CH5_LOW && ch5_prev != CH5_LOW)
+ 	{
+ 		kfs_motor_select = !kfs_motor_select;
+ 	}
+ 	ch5_prev = RCctrl.CH5;
 	
-// 		if(kfs_motor_select==0)
-// 		{
-// 			kfs_above.PID_Calculate(&kfs_above,(992-RCctrl.CH2)*8);
-// 			kfs_below.PID_Calculate(&kfs_below,0);
-// 		}
-// 		else
-// 		{
-// 			kfs_above.PID_Calculate(&kfs_above,0);
-// 			kfs_below.PID_Calculate(&kfs_below,(RCctrl.CH2-992)*8);
-// 		}
-// 	DJIset_motor_data(&hfdcan3, 0X200, kfs_above.pid_spd.Output,kfs_below.pid_spd.Output,0.0f,0.0f);
+ 		if(kfs_motor_select==0)
+ 		{
+ 			kfs_above.PID_Calculate(&kfs_above,(992-RCctrl.CH2)*8);
+ 			kfs_below.PID_Calculate(&kfs_below,0);
+ 		}
+ 		else
+ 		{
+ 			kfs_above.PID_Calculate(&kfs_above,0);
+ 			kfs_below.PID_Calculate(&kfs_below,(RCctrl.CH2-992)*8);
+ 		}
+ 	DJIset_motor_data(&hfdcan3, 0X200, kfs_above.pid_spd.Output,kfs_below.pid_spd.Output,0.0f,0.0f);
 
 }
