@@ -8,8 +8,11 @@
 #include "lift.h"
 #include "weapon.h"
 #include "tim.h"
+#include "remote_control.h"
 
 static float flexible_motor_PID_input;
+
+
 
 void Can_Task(void const * argument)
 {
@@ -53,9 +56,27 @@ void Can_Task(void const * argument)
             switch(control_mode)
             {
                 case master_control:
+                    switch (master_mode)
+                    {
+                        case master_chassis_mode:
+                            manual_chassis_function();
+                            break;
+                        case master_weapon_mode:
+                            manual_weapon_function();
+                            break;
+                        case master_lift_mode:
+                            manual_lift_function();
+                            break;
+                        case master_kfs_mode:
+                            manual_kfs_function();
+                            break;
+                        case master_none:
+                        default:
+                            break;
+                    }
                     break;
-								case part_remote_control:
-										break;
+                case part_remote_control:
+                        break;
                 case remote_control:
 									switch (remote_mode)
 									{

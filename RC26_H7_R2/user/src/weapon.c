@@ -1,5 +1,6 @@
 #include "weapon.h"
 #include "remote_control.h"
+#include "Motion_Task.h"
 #include "main.h"
 #include "tim.h"
 
@@ -19,6 +20,41 @@ uint8_t pump2_state = 0;     // 泵2开合（PE14）
 // 消抖锁
 uint8_t ch5_lock = 0;
 
+/* master_weapon_action_bits（第二个字节）位定义 */
+#define MASTER_WEAPON_SERVO_BIT   (1U << 0)
+#define MASTER_WEAPON_CLAMP_BIT   (1U << 1)
+#define MASTER_WEAPON_SUCKER1_BIT (1U << 2)
+#define MASTER_WEAPON_SUCKER2_BIT (1U << 3)
+#define MASTER_WEAPON_SUCKER3_BIT (1U << 4)
+#define MASTER_WEAPON_SUCKER4_BIT (1U << 5)
+
+static void weapon_master_drive_by_bits(uint8_t action_bits)
+{
+    /* bit0: 舵机，0->1400，1->2100 */
+    servo_state = ((action_bits & MASTER_WEAPON_SERVO_BIT) != 0U) ? 1U : 0U;
+    if (servo_state == 0U)
+    {
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1400);
+    }
+    else
+    {
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2100);
+    }
+
+    /* bit1: 夹爪，按你的要求 1->SET，0->RESET */
+    clamp_state = ((action_bits & MASTER_WEAPON_CLAMP_BIT) != 0U) ? 1U : 0U;
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, clamp_state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    /* bit2~bit5: 吸盘1~4，状态进入现有联动函数 */
+    sucker1_state = ((action_bits & MASTER_WEAPON_SUCKER1_BIT) != 0U) ? 1U : 0U;
+    sucker2_state = ((action_bits & MASTER_WEAPON_SUCKER2_BIT) != 0U) ? 1U : 0U;
+    sucker3_state = ((action_bits & MASTER_WEAPON_SUCKER3_BIT) != 0U) ? 1U : 0U;
+    sucker4_state = ((action_bits & MASTER_WEAPON_SUCKER4_BIT) != 0U) ? 1U : 0U;
+
+    pump1_two_suckers_linkage_nominal_open((uint8_t)(sucker1_state & 0x01U), (uint8_t)(sucker2_state & 0x01U));
+    pump2_two_suckers_linkage_nominal_open((uint8_t)(sucker3_state & 0x01U), (uint8_t)(sucker4_state & 0x01U));
+}
+
 //void weapon_init(void)
 //{
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
@@ -36,30 +72,41 @@ uint8_t ch5_lock = 0;
   */
 void manual_weapon_function(void)
 {
-	if (RCctrl.CH3==1792)
-	{
-	servo_use();
-	}
-	if (RCctrl.CH3==192)
-	{
-	clamp_use();
-	}
-	if (RCctrl.CH2==1792)
-	{
-	sucker1_use();
-	}
-	if (RCctrl.CH1==192)
-	{
-	sucker2_use();
-	}
-	if (RCctrl.CH1==1792)
-	{
-	sucker3_use();
-	}
-	if (RCctrl.CH2==192)
-	{
-	sucker4_use();
-	}
+    /* master模式：按数据包位控直接驱动机构 */
+    if (control_mode == master_control)
+    {
+        weapon_master_drive_by_bits(master_weapon_action_bits);
+        return;
+    }
+
+    /* 遥控模式：保持原手动逻辑 */
+    if(control_mode == remote_control)
+    {
+        if (RCctrl.CH3==1792)
+        {
+        servo_use();
+        }
+        if (RCctrl.CH3==192)
+        {
+        clamp_use();
+        }
+        if (RCctrl.CH2==1792)
+        {
+        sucker1_use();
+        }
+        if (RCctrl.CH1==192)
+        {
+        sucker2_use();
+        }
+        if (RCctrl.CH1==1792)
+        {
+        sucker3_use();
+        }
+        if (RCctrl.CH2==192)
+        {
+        sucker4_use();
+        }
+    }
 
 }
 

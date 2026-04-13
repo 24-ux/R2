@@ -3,10 +3,13 @@
 #include "chassis.h"
 #include "cmsis_os.h"
 #include "weapon.h"
+#include "usbd_cdc_if.h"
 
 //Weapon_mode weapon_mode;
 Control_mode control_mode;
 Remote_mode remote_mode;
+Master_mode master_mode;
+uint8_t master_weapon_action_bits;
 R2_lift_mode r2_lift_mode;
 
 static uint8_t rc_bit_minmax_decode(uint16_t ch_val)
@@ -79,6 +82,36 @@ void Motion_Task(void const * argument)
 				case part_remote_control:
 					break;
 				case master_control:
+          /* 主控模式：使用USB数据包data[0]的位控制任务状态机
+           * bit0=底盘 bit1=武器 bit2=抬升 bit3=kfs
+           * 多个位同时为1时按底盘>武器>抬升>kfs优先级取一个
+           */
+          if (usb_last_packet_valid != 0U)
+          {
+            uint8_t master_bits = usb_last_packet_data[0];
+            master_weapon_action_bits = usb_last_packet_data[1];
+
+            if ((master_bits & 0x01U) != 0U)
+            {
+              master_mode = master_chassis_mode;
+            }
+            else if ((master_bits & 0x02U) != 0U)
+            {
+              master_mode = master_weapon_mode;
+            }
+            else if ((master_bits & 0x04U) != 0U)
+            {
+              master_mode = master_lift_mode;
+            }
+            else if ((master_bits & 0x08U) != 0U)
+            {
+              master_mode = master_kfs_mode;
+            }
+            else
+            {
+              master_mode = master_none;
+            }
+          }
 					break;
 			}
 		
@@ -86,5 +119,6 @@ void Motion_Task(void const * argument)
       
       
     osDelay(1);
+
   }
 
