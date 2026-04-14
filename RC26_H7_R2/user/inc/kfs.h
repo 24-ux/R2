@@ -8,7 +8,7 @@
 
 /***********************************************/
 
-//Ôºàcan2Ôºâ
+//Ôºàcan2Ôº?
 #define MAIN_LIFT_ID               0x05
 #define MAIN_LIFT_CMD_ID           MAIN_LIFT_ID
 #define MAIN_LIFT_FEEDBACK_ID      MAIN_LIFT_ID
@@ -25,21 +25,23 @@
 #define THREE_KFS_MASTER_ID        0x10
 
 /***********************************************/
-//‰∏ä
+//‰∏?
 #define KFS_ABOVE_ID               0x01
 #define KFS_ABOVE_CMD_ID           0x200
 #define KFS_ABOVE_FEEDBACK_ID      0x200 + KFS_ABOVE_ID
-//‰∏ã
+//‰∏?
 #define KFS_BELOW_ID               0x02
 #define KFS_BELOW_CMD_ID           0x200
 #define KFS_BELOW_FEEDBACK_ID      0x200 + KFS_BELOW_ID
 
-/************************ ÂÅèÁßªÈáè ***********************/
+/************************ ÂÅèÁßªÈá? ***********************/
 // three_kfs 
-#define THREE_KFS_OFFSET1    2.64f   // P1=ÂàùÂßã‰ΩçÁΩÆ
-#define THREE_KFS_OFFSET2    4.75f   
-#define THREE_KFS_OFFSET3    6.875f   
-
+#define THREE_KFS_OFFSET1    -1.11f//2.64f  Œ¸≈Ã∂˛
+#define THREE_KFS_OFFSET2    -3.02f//4.75f  Œ¸≈ÃÀƒ
+#define THREE_KFS_OFFSET3    0.96f//6.875f  Œ¸≈Ã»˝
+#define THREE_KFS_OFFSET4    -1.11f//2.64f  Œ¸≈Ã∂˛
+#define THREE_KFS_OFFSET5    -3.02f//4.75f  Œ¸≈ÃÀƒ
+#define THREE_KFS_OFFSET6    0.96f//6.875f  Œ¸≈Ã»˝
 // main_lift
 #define MAIN_LIFT_OFFSET1    0.0f
 #define MAIN_LIFT_OFFSET2    -6.0f
@@ -47,9 +49,12 @@
 #define MAIN_LIFT_OFFSET4    -6.0f
 
 // kfs_spin 
-#define KFS_SPIN_OFFSET1     0.7f
-#define KFS_SPIN_OFFSET2     2.0f
-//#define KFS_SPIN_OFFSET3     1.5f
+#define KFS_SPIN_OFFSET1     0.9f//0.7f
+#define KFS_SPIN_OFFSET2     0.9f
+#define KFS_SPIN_OFFSET3     0.9f
+#define KFS_SPIN_OFFSET4     0.9f
+#define KFS_SPIN_OFFSET5     0.9f	
+#define KFS_SPIN_OFFSET6     0.9f
 /*******************************************************************/
 
 
@@ -58,12 +63,19 @@
 typedef enum{
 	three_kfs_p1,
 	three_kfs_p2,
-	three_kfs_p3
+	three_kfs_p3,
+	three_kfs_p4,
+	three_kfs_p5,
+	three_kfs_p6,
 }Three_kfs_position;
 
 typedef enum{
 	kfs_spin_p1,
 	kfs_spin_p2,
+	kfs_spin_p3,
+	kfs_spin_p4,
+	kfs_spin_p5,
+	kfs_spin_p6,
 } Kfs_spin_position;
 
 typedef enum{

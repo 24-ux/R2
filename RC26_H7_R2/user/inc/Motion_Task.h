@@ -11,7 +11,7 @@
 
 typedef enum{
     remote_control,//0
-		part_remote_control,//1
+    emergency_stop_mode,//1
     master_control,//2
 }Control_mode;                                                              
 

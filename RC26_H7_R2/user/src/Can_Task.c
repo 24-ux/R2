@@ -75,8 +75,20 @@ void Can_Task(void const * argument)
                             break;
                     }
                     break;
-                case part_remote_control:
-                        break;
+                case emergency_stop_mode:
+                    /* 急停模式：主动清零所有输出，避免残留命令继续驱动 */
+                    Chassis.Chassis_Stop(&Chassis);
+                    DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
+                    DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
+                    DJIset_motor_data(&hfdcan3, 0X200, 0, 0, 0, 0);
+
+                    /* DM电机（MIT）清零：kp/kd/torque全0 */
+                    R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                    R2_lift_motor_right.set_mit_data(&R2_lift_motor_right, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                    main_lift.set_mit_data(&main_lift, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                    kfs_spin.set_mit_data(&kfs_spin, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                    three_kfs.set_mit_data(&three_kfs, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+                    break;
                 case remote_control:
 									switch (remote_mode)
 									{

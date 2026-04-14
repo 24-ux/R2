@@ -40,25 +40,7 @@ void Motion_Task(void const * argument)
 		
 		if(RCctrl.CH8 < 500)
 		{
-			uint8_t i = 0U;
-			/* 此档位定义为急停模式 */
-			control_mode  = part_remote_control;
-			master_mode = master_none;
-
-			/* 清空各模块动作字节 */
-			master_chassis_action_bits_0 = 0U;
-			master_chassis_action_bits_1 = 0U;
-			master_weapon_action_bits = 0U;
-			master_lift_action_bits = 0U;
-			master_kfs_action_bits_0 = 0U;
-			master_kfs_action_bits_1 = 0U;
-
-			/* 清空USB数据区（20字节） */
-			for (i = 0U; i < 20U; i++)
-			{
-				usb_last_packet_data[i] = 0U;
-			}
-			usb_last_packet_valid = 0U;
+      control_mode  = emergency_stop_mode;
 		}
 		
 		else if(RCctrl.CH8 > 500 && RCctrl.CH8 < 1500)
@@ -102,8 +84,28 @@ void Motion_Task(void const * argument)
           }
 					break;
 					
-				case part_remote_control:
+				case emergency_stop_mode:
+          {
+            uint8_t i = 0U;
+            /* 此档位定义为急停模式 */
+            master_mode = master_none;
+
+            /* 清空各模块动作字节 */
+            master_chassis_action_bits_0 = 0U;
+            master_chassis_action_bits_1 = 0U;
+            master_weapon_action_bits = 0U;
+            master_lift_action_bits = 0U;
+            master_kfs_action_bits_0 = 0U;
+            master_kfs_action_bits_1 = 0U;
+
+            /* 清空USB数据区（20字节） */
+            for (i = 0U; i < 20U; i++)
+            {
+              usb_last_packet_data[i] = 0U;
+            }
+            usb_last_packet_valid = 0U;
 					break;
+          }
 				case master_control:
           /* 主控模式：使用USB数据包data[0]的位控制任务状态机
            * bit0=底盘 bit1=武器 bit2=抬升 bit3=kfs

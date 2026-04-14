@@ -27,18 +27,24 @@ float three_kfs_Initpos = 1.6f;
 float kfs_above_pid_param[PID_PARAMETER_NUM] = {5.0f,0.1f,0.2f,1,500.0f,10000.0f};
 float kfs_below_pid_param[PID_PARAMETER_NUM] = {5.0f,0.1f,0.2f,1,500.0f,10000.0f};
 
+
 //初始化：读取上电初始位置
 void kfs_three_kfs_spin_main_lift_pos_init(void)
 {
 	three_kfs.set_mit_data(&three_kfs, three_kfs_Initpos, 0.0f, 0.5f, 0.2f, 0.2f);
 	main_lift.set_mit_data(&main_lift, MAIN_LIFT_OFFSET1, 0.0f, 0.2, 0.15f, -5.0f);
-	kfs_spin.set_mit_data(&kfs_spin, kfs_spin_Initpos + KFS_SPIN_OFFSET1, 0.0f, 6.5f, 2.0f, 0.0f);
+	// kfs_spin.set_mit_data(&kfs_spin, kfs_spin_Initpos + KFS_SPIN_OFFSET1, 0.0f, 6.5f, 2.0f, 0.0f);
 
 	three_kfs_position = three_kfs_p1;
 	main_lift_position = main_lift_p1;
 	kfs_spin_position  = kfs_spin_p1;
 }
 
+static float three_kfs_calc_feedforward_torque(float current_position, float target_position)
+{
+	float three_kfs_position_error = current_position - target_position;
+	return 0.5123f * sinf(2.417f * three_kfs_position_error);
+}
 
 
 /**
@@ -145,71 +151,92 @@ void manual_kfs_function(void)
 	{
 		if (RCctrl.CH1 == CH1_HIGH && ch1_prev != CH1_HIGH)
 		{
-			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position + 1) % 3);
+			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position + 1) % 6);
 		}
 		if (RCctrl.CH1 == CH1_LOW && ch1_prev != CH1_LOW)
 		{
-			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position - 1+3) % 3);
+			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position - 1+6) % 6);
 		}
 		ch1_prev = RCctrl.CH1;
 	}
+	
+	
+	
 
 
-float tar_3k;
+	float tar_3k;
+	
 	switch(three_kfs_position)
 	{
 		case three_kfs_p1:
 			tar_3k = THREE_KFS_OFFSET1;
+			// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.70f, 0.26f, 0.0f);
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
 		break;
 		case three_kfs_p2:
 			tar_3k = THREE_KFS_OFFSET2;
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
 		break;
 		case three_kfs_p3: 
 			tar_3k = THREE_KFS_OFFSET3;
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+		break;
+		case three_kfs_p4:
+			tar_3k = THREE_KFS_OFFSET4;
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+		break;
+		case three_kfs_p5:
+			tar_3k = THREE_KFS_OFFSET5;
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+		break;
+		case three_kfs_p6:
+			tar_3k = THREE_KFS_OFFSET6;
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
 		break;
 		default: tar_3k = three_kfs_Initpos;
 	}
-	three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.5f, 0.2f, 0.2f);
+	// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.5f, 0.0f, 0.0f);
+	// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 //通道三控制主升机构升降
-	static uint16_t ch3_prev = 0;
+// 	static uint16_t ch3_prev = 0;
 	
-	if (control_mode == remote_control)
-	{
-		if (RCctrl.CH3 == CH3_HIGH && ch3_prev != CH3_HIGH)
-		{
-			main_lift_position = (Main_lift_position)(((int)main_lift_position + 1) % 4);
-		}
-		if (RCctrl.CH3 == CH3_LOW && ch3_prev != CH3_LOW)
-		{
-			main_lift_position = (Main_lift_position)(((int)main_lift_position - 1+4) % 4);
-		}
-		ch3_prev = RCctrl.CH3;
-	}
+// 	if (control_mode == remote_control)
+// 	{
+// 		if (RCctrl.CH3 == CH3_HIGH && ch3_prev != CH3_HIGH)
+// 		{
+// 			main_lift_position = (Main_lift_position)(((int)main_lift_position + 1) % 4);
+// 		}
+// 		if (RCctrl.CH3 == CH3_LOW && ch3_prev != CH3_LOW)
+// 		{
+// 			main_lift_position = (Main_lift_position)(((int)main_lift_position - 1+4) % 4);
+// 		}
+// 		ch3_prev = RCctrl.CH3;
+// 	}
 
 
-float tar_lift;
-	switch(main_lift_position)
-	{
-		case main_lift_p1:
-			tar_lift = MAIN_LIFT_OFFSET1;
-			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.0f, 0.0f, 0.0f);
-		break;
-		case main_lift_p2:
-			tar_lift = MAIN_LIFT_OFFSET2;
-			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.30f, 0.025f, -2.0f);
-		break;
-		case main_lift_p3:
-			tar_lift = MAIN_LIFT_OFFSET3;
-			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.20f, 0.025f, -2.0f);
-		break;
-		case main_lift_p4:
-			tar_lift = MAIN_LIFT_OFFSET4;
-			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.10f, 0.025f, -2.0f);
-		break;		
-		default: tar_lift = main_lift_Initpos;
-	}
-	main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.2, 0.15f, -5.0f);
+// float tar_lift;
+// 	switch(main_lift_position)
+// 	{
+// 		case main_lift_p1:
+// 			tar_lift = MAIN_LIFT_OFFSET1;
+// 			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.0f, 0.0f, 0.0f);
+// 		break;
+// 		case main_lift_p2:
+// 			tar_lift = MAIN_LIFT_OFFSET2;
+// 			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.30f, 0.025f, -2.0f);
+// 		break;
+// 		case main_lift_p3:
+// 			tar_lift = MAIN_LIFT_OFFSET3;
+// 			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.20f, 0.025f, -2.0f);
+// 		break;
+// 		case main_lift_p4:
+// 			tar_lift = MAIN_LIFT_OFFSET4;
+// 			main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.10f, 0.025f, -2.0f);
+// 		break;		
+// 		default: tar_lift = main_lift_Initpos;
+// 	}
+	// main_lift.set_mit_data(&main_lift, tar_lift, 0.0f, 0.2, 0.15f, -5.0f);
 	main_lift.set_mit_data(&main_lift, 0, (992-RCctrl.CH3)/150, 0, 0.3, -1.0);
 				
 //通道四控制前臂kfs旋转
@@ -217,7 +244,7 @@ float tar_lift;
 
 	static uint16_t ch4_prev = 0;
 
-		if (control_mode != remote_control)
+		if (control_mode == remote_control)
 		{
 			if (RCctrl.CH4 == CH4_HIGH && ch4_prev != CH4_HIGH)
 			{
@@ -235,11 +262,28 @@ float tar_spin;
 	{
 		case kfs_spin_p1:
 			tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET1;
-			kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 6.5f, 2.0f, 0.0f);
+			kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 11.0f, 2.6f, -4.0f);
 		break;
 		case kfs_spin_p2:
 			tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET2;
-			kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 0.2f, 1.0f, 0.0f);
+			// kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 6.8f, 2.2f, 0.0f);
+			kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 0.1f, 0.4f, 0.0f);
+		break;
+		case kfs_spin_p3:
+			// tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET3;
+			// kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 11.0f, 2.6f, -4.2f);
+		break;
+		case kfs_spin_p4:
+			// tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET4;
+			// kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 0.2f, 1.0f, 0.0f);
+		break;
+		case kfs_spin_p5:
+			// tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET5;
+			// kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 11.0f, 2.6f, -4.2f);
+		break;
+		case kfs_spin_p6:
+			// tar_spin = kfs_spin_Initpos + KFS_SPIN_OFFSET6;
+			// kfs_spin.set_mit_data(&kfs_spin, tar_spin, 0.0f, 0.2f, 1.0f, 0.0f);
 		break;
 	}
 
