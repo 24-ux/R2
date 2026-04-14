@@ -36,12 +36,12 @@
 
 /************************ 鍋忕Щ閲? ***********************/
 // three_kfs 
-#define THREE_KFS_OFFSET1    -1.11f//2.64f  吸盘二
-#define THREE_KFS_OFFSET2    -3.02f//4.75f  吸盘四
-#define THREE_KFS_OFFSET3    0.96f//6.875f  吸盘三
-#define THREE_KFS_OFFSET4    -1.11f//2.64f  吸盘二
-#define THREE_KFS_OFFSET5    -3.02f//4.75f  吸盘四
-#define THREE_KFS_OFFSET6    0.96f//6.875f  吸盘三
+#define THREE_KFS_OFFSET1    -1.11f//2.64f  吸盘2
+#define THREE_KFS_OFFSET2    0.96f//6.875f  吸盘3
+#define THREE_KFS_OFFSET3    3.075f//4.75f  吸盘4
+
+
+
 // main_lift
 #define MAIN_LIFT_OFFSET1    0.0f
 #define MAIN_LIFT_OFFSET2    -6.0f
@@ -51,10 +51,7 @@
 // kfs_spin 
 #define KFS_SPIN_OFFSET1     0.9f//0.7f
 #define KFS_SPIN_OFFSET2     0.9f
-#define KFS_SPIN_OFFSET3     0.9f
-#define KFS_SPIN_OFFSET4     0.9f
-#define KFS_SPIN_OFFSET5     0.9f	
-#define KFS_SPIN_OFFSET6     0.9f
+
 /*******************************************************************/
 
 
@@ -64,9 +61,6 @@ typedef enum{
 	three_kfs_p1,
 	three_kfs_p2,
 	three_kfs_p3,
-	three_kfs_p4,
-	three_kfs_p5,
-	three_kfs_p6,
 }Three_kfs_position;
 
 typedef enum{

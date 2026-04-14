@@ -27,25 +27,17 @@ float three_kfs_Initpos = 1.6f;
 float kfs_above_pid_param[PID_PARAMETER_NUM] = {5.0f,0.1f,0.2f,1,500.0f,10000.0f};
 float kfs_below_pid_param[PID_PARAMETER_NUM] = {5.0f,0.1f,0.2f,1,500.0f,10000.0f};
 
-
 //初始化：读取上电初始位置
 void kfs_three_kfs_spin_main_lift_pos_init(void)
 {
 	three_kfs.set_mit_data(&three_kfs, three_kfs_Initpos, 0.0f, 0.5f, 0.2f, 0.2f);
 	main_lift.set_mit_data(&main_lift, MAIN_LIFT_OFFSET1, 0.0f, 0.2, 0.15f, -5.0f);
-	// kfs_spin.set_mit_data(&kfs_spin, kfs_spin_Initpos + KFS_SPIN_OFFSET1, 0.0f, 6.5f, 2.0f, 0.0f);
+ kfs_spin.set_mit_data(&kfs_spin, kfs_spin_Initpos + KFS_SPIN_OFFSET1, 0.0f, 6.5f, 2.0f, 0.0f);
 
 	three_kfs_position = three_kfs_p1;
 	main_lift_position = main_lift_p1;
 	kfs_spin_position  = kfs_spin_p1;
 }
-
-static float three_kfs_calc_feedforward_torque(float current_position, float target_position)
-{
-	float three_kfs_position_error = current_position - target_position;
-	return 0.5123f * sinf(2.417f * three_kfs_position_error);
-}
-
 
 /**
   * @brief kfs函数
@@ -146,16 +138,45 @@ void manual_kfs_function(void)
 
 //通道一控制三个kfs旋转
 	static uint16_t ch1_prev = 0;
+	static int8_t three_kfs_pingpong_dir = 1; /* 1: p1->p3, -1: p3->p1 */
 	
 	if (control_mode == remote_control)
 	{
 		if (RCctrl.CH1 == CH1_HIGH && ch1_prev != CH1_HIGH)
 		{
-			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position + 1) % 6);
+			if (three_kfs_position == three_kfs_p1) three_kfs_pingpong_dir = 1;
+			else if (three_kfs_position == three_kfs_p3) three_kfs_pingpong_dir = -1;
+
+			if (three_kfs_pingpong_dir > 0)
+			{
+				if (three_kfs_position == three_kfs_p1) three_kfs_position = three_kfs_p2;
+				else if (three_kfs_position == three_kfs_p2) three_kfs_position = three_kfs_p3;
+				else three_kfs_position = three_kfs_p2;
+			}
+			else
+			{
+				if (three_kfs_position == three_kfs_p3) three_kfs_position = three_kfs_p2;
+				else if (three_kfs_position == three_kfs_p2) three_kfs_position = three_kfs_p1;
+				else three_kfs_position = three_kfs_p2;
+			}
 		}
 		if (RCctrl.CH1 == CH1_LOW && ch1_prev != CH1_LOW)
 		{
-			three_kfs_position = (Three_kfs_position)(((int)three_kfs_position - 1+6) % 6);
+			if (three_kfs_position == three_kfs_p1) three_kfs_pingpong_dir = 1;
+			else if (three_kfs_position == three_kfs_p3) three_kfs_pingpong_dir = -1;
+
+			if (three_kfs_pingpong_dir > 0)
+			{
+				if (three_kfs_position == three_kfs_p1) three_kfs_position = three_kfs_p2;
+				else if (three_kfs_position == three_kfs_p2) three_kfs_position = three_kfs_p3;
+				else three_kfs_position = three_kfs_p2;
+			}
+			else
+			{
+				if (three_kfs_position == three_kfs_p3) three_kfs_position = three_kfs_p2;
+				else if (three_kfs_position == three_kfs_p2) three_kfs_position = three_kfs_p1;
+				else three_kfs_position = three_kfs_p2;
+			}
 		}
 		ch1_prev = RCctrl.CH1;
 	}
@@ -170,32 +191,18 @@ void manual_kfs_function(void)
 	{
 		case three_kfs_p1:
 			tar_3k = THREE_KFS_OFFSET1;
-			// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.70f, 0.26f, 0.0f);
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, 0.0f);
 		break;
 		case three_kfs_p2:
 			tar_3k = THREE_KFS_OFFSET2;
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, 0.528f);
 		break;
 		case three_kfs_p3: 
 			tar_3k = THREE_KFS_OFFSET3;
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
-		break;
-		case three_kfs_p4:
-			tar_3k = THREE_KFS_OFFSET4;
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
-		break;
-		case three_kfs_p5:
-			tar_3k = THREE_KFS_OFFSET5;
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
-		break;
-		case three_kfs_p6:
-			tar_3k = THREE_KFS_OFFSET6;
-			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, three_kfs_calc_feedforward_torque(three_kfs.position, tar_3k));
+			three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.86f, 0.28f, 0.0f);
 		break;
 		default: tar_3k = three_kfs_Initpos;
 	}
-	// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.5f, 0.0f, 0.0f);
 	// three_kfs.set_mit_data(&three_kfs, tar_3k, 0.0f, 0.0f, 0.0f, 0.0f);
 	
 //通道三控制主升机构升降
