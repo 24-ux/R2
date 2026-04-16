@@ -31,15 +31,15 @@ uint8_t ch5_lock = 0;
 
 static void weapon_master_drive_by_bits(uint8_t action_bits)
 {
-    /* bit0: 舵机，0->1400，1->2100 */
+    /* bit0: 舵机，0->2100，1->1100 */
     servo_state = ((action_bits & MASTER_WEAPON_SERVO_BIT) != 0U) ? 1U : 0U;
     if (servo_state == 0U)
     {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);
-    }
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2100);
+    }   
     else
     {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1100);
     }
 
     /* bit1: 夹爪，按你的要求 1->SET，0->RESET */

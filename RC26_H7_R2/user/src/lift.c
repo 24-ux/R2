@@ -156,13 +156,13 @@ void manual_lift_function(void)
 
 	// 模式切换 → 复位所有状态
 	if(r2_lift_mode != last_r2_lift_mode)
-	{
+	{	
 		last_r2_lift_mode = r2_lift_mode;
 		lift_has_stopped = 0;
 		lift_running = 0;
 	}
 	// 已经触底/触顶停止 → 输出刹车力矩，不掉落
-	  if(lift_has_stopped)
+	if(lift_has_stopped)
 	{
 		
 		if(lift_stop_mode == fall)
@@ -173,16 +173,15 @@ void manual_lift_function(void)
 		}
 		else if(lift_stop_mode == raise)
 		{
-				R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, 0, 0, 0.5f, 1.6f);
-				R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 0, 0, 0.5f,  -2.5f);
+				R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, 0, 0, 0.5f, 1.9f);
+				R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 0, 0, 0.5f,  -2.8f);
 		}
 	}
-
-	// 正常运行
-	if(r2_lift_mode == fall)
+	// 正常运行（仅在未到位停机时执行）
+	else if(r2_lift_mode == fall)
 	{
-		R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, -2.0f, 0, 0.15f, -1.2f);
-		R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 2.0f, 0, 0.15f,  1.2f);
+		R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, -1.0f, 0, 0.30f, -1.1f);
+		R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 1.0f, 0, 0.30f,  1.1f);
 
 		if(fabsf(R2_lift_motor_left.speed_w) > 1.5f || fabsf(R2_lift_motor_right.speed_w) > 1.5f)
 		{
@@ -200,8 +199,8 @@ void manual_lift_function(void)
 	}
 	else if(r2_lift_mode == raise)
 	{
-		R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0,  2.0f, 0, 0.15f,  3.4f);
-		R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, -2.5f, 0, 0.15f, -3.7f);
+		R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0,  2.2f, 0, 0.15f,  3.6f);
+		R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, -2.7f, 0, 0.15f, -3.9f);
 
 		if(fabsf(R2_lift_motor_left.speed_w) > 1.5f || fabsf(R2_lift_motor_right.speed_w) > 1.5f)
 		{
