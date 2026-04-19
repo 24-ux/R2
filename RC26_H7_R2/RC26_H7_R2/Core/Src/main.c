@@ -22,6 +22,7 @@
 #include "cmsis_os2.h"
 #include "dma.h"
 #include "fdcan.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
@@ -37,6 +38,7 @@
 #include "kfs.h"
 #include "weapon.h"
 #include "sensor.h"
+#include "BMI088driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+volatile uint8_t g_bmi088_err = 0xEEU;
 
 /* USER CODE END PV */
 
@@ -114,6 +117,7 @@ int main(void)
   MX_FDCAN3_Init();
   MX_USART10_UART_Init();
   MX_UART9_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   BSP_CAN_Init();
   BSP_USART_Init();
@@ -126,6 +130,7 @@ int main(void)
   Structue_Init();
   lift_init();
   kfs_three_kfs_spin_main_lift_pos_init();
+  BMI088_init();
   MX_USB_DEVICE_Init();
 	Laser_Init(&huart7, &huart10);
   /* USER CODE END 2 */

@@ -9,9 +9,10 @@
 #include "weapon.h"
 #include "tim.h"
 #include "remote_control.h"
+#include "BMI088driver.h"
 
 
-
+float gyro[3], accel[3], temp;
 
 void Can_Task(void const * argument)
 {
@@ -22,6 +23,7 @@ void Can_Task(void const * argument)
    
     for(;;)
     {
+        BMI088_read(gyro, accel, &temp);
         // Systick = osKernelGetTickCount();
 
 //          if(Chassis.super_struct.base.error_code == 0x00)

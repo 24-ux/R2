@@ -10,7 +10,7 @@ extern SPI_HandleTypeDef BMI088_USING_SPI_UNIT;
 * @brief:      	BMI088_GPIO_init(void)
 * @param:       void
 * @retval:     	void
-* @details:    	BMI088传感器GPIO初始化函数
+* @details:    	BMI088 传感器 GPIO 初始化函数
 ************************************************************************
 **/
 void BMI088_GPIO_init(void)
@@ -22,7 +22,7 @@ void BMI088_GPIO_init(void)
 * @brief:      	BMI088_com_init(void)
 * @param:       void
 * @retval:     	void
-* @details:    	BMI088传感器通信初始化函数
+* @details:    	BMI088 传感器通信初始化函数
 ************************************************************************
 **/
 void BMI088_com_init(void)
@@ -35,7 +35,7 @@ void BMI088_com_init(void)
 * @brief:      	BMI088_delay_ms(uint16_t ms)
 * @param:       ms - 要延迟的毫秒数
 * @retval:     	void
-* @details:    	延迟指定毫秒数的函数，基于微秒延迟实现
+* @details:    	延迟指定毫秒数，基于微秒延时实现
 ************************************************************************
 **/
 void BMI088_delay_ms(uint16_t ms)
@@ -50,39 +50,27 @@ void BMI088_delay_ms(uint16_t ms)
 * @brief:      	BMI088_delay_us(uint16_t us)
 * @param:       us - 要延迟的微秒数
 * @retval:     	void
-* @details:    	微秒级延迟函数，使用SysTick定时器实现
+* @details:    	微秒级延时函数，使用 DWT 计数器实现
 ************************************************************************
 **/
 void BMI088_delay_us(uint16_t us)
 {
+    static uint8_t dwt_inited = 0U;
+    uint32_t start = 0U;
+    uint32_t cycles = 0U;
 
-    uint32_t ticks = 0;
-    uint32_t told = 0;
-    uint32_t tnow = 0;
-    uint32_t tcnt = 0;
-    uint32_t reload = 0;
-    reload = SysTick->LOAD;
-    ticks = us * 480;
-    told = SysTick->VAL;
-    while (1)
+    if (dwt_inited == 0U)
     {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
+        CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+        DWT->CYCCNT = 0U;
+        DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+        dwt_inited = 1U;
+    }
+
+    cycles = (SystemCoreClock / 1000000U) * (uint32_t)us;
+    start = DWT->CYCCNT;
+    while ((uint32_t)(DWT->CYCCNT - start) < cycles)
+    {
     }
 }
 /**
@@ -90,7 +78,7 @@ void BMI088_delay_us(uint16_t us)
 * @brief:      	BMI088_ACCEL_NS_L(void)
 * @param:       void
 * @retval:     	void
-* @details:    	将BMI088加速度计片选信号置低，使其处于选中状态
+* @details:    	将 BMI088 加速度计片选信号置低，使其处于选中状态
 ************************************************************************
 **/
 void BMI088_ACCEL_NS_L(void)
@@ -102,7 +90,7 @@ void BMI088_ACCEL_NS_L(void)
 * @brief:      	BMI088_ACCEL_NS_H(void)
 * @param:       void
 * @retval:     	void
-* @details:    	将BMI088加速度计片选信号置高，使其处于非选中状态
+* @details:    	将 BMI088 加速度计片选信号置高，使其处于非选中状态
 ************************************************************************
 **/
 void BMI088_ACCEL_NS_H(void)
@@ -114,7 +102,7 @@ void BMI088_ACCEL_NS_H(void)
 * @brief:      	BMI088_GYRO_NS_L(void)
 * @param:       void
 * @retval:     	void
-* @details:    	将BMI088陀螺仪片选信号置低，使其处于选中状态
+* @details:    	将 BMI088 陀螺仪片选信号置低，使其处于选中状态
 ************************************************************************
 **/
 void BMI088_GYRO_NS_L(void)
@@ -126,7 +114,7 @@ void BMI088_GYRO_NS_L(void)
 * @brief:      	BMI088_GYRO_NS_H(void)
 * @param:       void
 * @retval:     	void
-* @details:    	将BMI088陀螺仪片选信号置高，使其处于非选中状态
+* @details:    	将 BMI088 陀螺仪片选信号置高，使其处于非选中状态
 ************************************************************************
 **/
 void BMI088_GYRO_NS_H(void)
@@ -138,7 +126,7 @@ void BMI088_GYRO_NS_H(void)
 * @brief:      	BMI088_read_write_byte(uint8_t txdata)
 * @param:       txdata - 要发送的数据
 * @retval:     	uint8_t - 接收到的数据
-* @details:    	通过BMI088使用的SPI总线进行单字节的读写操作
+* @details:    	通过 BMI088 使用的 SPI 总线进行单字节读写
 ************************************************************************
 **/
 uint8_t BMI088_read_write_byte(uint8_t txdata)

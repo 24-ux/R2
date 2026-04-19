@@ -39,6 +39,8 @@ rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c_ex.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h
+rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h
+rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 rc26_h7_r1\can_task.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
@@ -62,3 +64,4 @@ rc26_h7_r1\can_task.o: ../user/inc/kfs.h
 rc26_h7_r1\can_task.o: ../user/inc/lift.h
 rc26_h7_r1\can_task.o: ../user/inc/weapon.h
 rc26_h7_r1\can_task.o: ../Core/Inc/tim.h
+rc26_h7_r1\can_task.o: ..\BMI088\inc\BMI088driver.h
