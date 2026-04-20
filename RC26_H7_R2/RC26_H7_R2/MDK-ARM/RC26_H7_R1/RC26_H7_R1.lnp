@@ -71,6 +71,7 @@
 "rc26_h7_r1\global.o"
 "rc26_h7_r1\register.o"
 "rc26_h7_r1\pid.o"
+"rc26_h7_r1\chassis_yaw_correction.o"
 "rc26_h7_r1\usb_device.o"
 "rc26_h7_r1\usbd_desc.o"
 "rc26_h7_r1\usbd_cdc_if.o"

@@ -2,6 +2,8 @@
 #include "Motion_Task.h"
 #include "lift.h"
 #include "master_control.h"
+#include "chassis_yaw_correction.h"
+#include <math.h>
 
 Chassis_Module Chassis;
 
@@ -16,6 +18,20 @@ DJI_MotorModule chassis_motor4;  // 右后
 DJI_MotorModule guide_motor1;  // 左
 DJI_MotorModule guide_motor2;  // 右
  
+/* 来自 Can_Task 的 BMI088 角速度数据，gyro[2] 为 Z 轴角速度(rad/s) */
+extern float gyro[3];
+
+/* 调试用：四个底盘轮当前转速(rpm)，方便在断点/监视窗口直接看 */
+volatile int16_t g_dbg_chassis_rpm1 = 0;
+volatile int16_t g_dbg_chassis_rpm2 = 0;
+volatile int16_t g_dbg_chassis_rpm3 = 0;
+volatile int16_t g_dbg_chassis_rpm4 = 0;
+
+/* 四轮速度配平系数：用于补偿轮子/电机效率差异（可在调试器里在线改） */
+volatile float g_chassis_spd_gain1 = 1.00f; /* 左前 */
+volatile float g_chassis_spd_gain2 = 1.03f; /* 右前：根据右移测试先预补偿约+5% */
+volatile float g_chassis_spd_gain3 = 1.00f; /* 左后 */
+volatile float g_chassis_spd_gain4 = 1.00f; /* 右后 */
 
 
 
@@ -55,7 +71,7 @@ static void chassis_apply_master_motion(void)
     float trans = ((float)amp / (float)(CH2_HIGH - CH2_MID)) * 100.0f;
     float rot = (40.2814f / 4.0f) * (((float)amp / (float)(CH4_HIGH - CH4_MID)) * 5.0f);
 
-    /* master模式下直接写底盘输入，不再借用RC通道值 */
+    /* master 模式下直接写底盘输入，不再复用 RC 通道值 */
     Chassis.param.Accel = 100.0f;
     Chassis.param.Vw_in = 0.0f;
     Chassis.param.Vy_in = 0.0f;
@@ -145,10 +161,16 @@ flexible_motor_state_machine_step();
 
 	Chassis.Chassis_Calc(&Chassis);
 
-	chassis_motor1.PID_Calculate(&chassis_motor1, 50*Chassis.param.V_out[0]);
-	chassis_motor2.PID_Calculate(&chassis_motor2, 50*Chassis.param.V_out[1]);
-	chassis_motor3.PID_Calculate(&chassis_motor3, 50*Chassis.param.V_out[2]);
-	chassis_motor4.PID_Calculate(&chassis_motor4, 50*Chassis.param.V_out[3]);
+	chassis_motor1.PID_Calculate(&chassis_motor1, g_chassis_spd_gain1 * 50.0f * Chassis.param.V_out[0]);
+	chassis_motor2.PID_Calculate(&chassis_motor2, g_chassis_spd_gain2 * 50.0f * Chassis.param.V_out[1]);
+	chassis_motor3.PID_Calculate(&chassis_motor3, g_chassis_spd_gain3 * 50.0f * Chassis.param.V_out[2]);
+	chassis_motor4.PID_Calculate(&chassis_motor4, g_chassis_spd_gain4 * 50.0f * Chassis.param.V_out[3]);
+
+	/* 更新调试观测值 */
+	g_dbg_chassis_rpm1 = (int16_t)chassis_motor1.speed_rpm;
+	g_dbg_chassis_rpm2 = (int16_t)chassis_motor2.speed_rpm;
+	g_dbg_chassis_rpm3 = (int16_t)chassis_motor3.speed_rpm;
+	g_dbg_chassis_rpm4 = (int16_t)chassis_motor4.speed_rpm;
 	
 	guide_motor1.PID_Calculate(&guide_motor1, 200*Chassis.param.V_out[0]);
 	guide_motor2.PID_Calculate(&guide_motor2, 200*Chassis.param.V_out[1]);
@@ -168,13 +190,15 @@ flexible_motor_state_machine_step();
 void Chassis_Calc(Chassis_Module *chassis)
 {
 		
-    // 仅遥控模式从RC通道读取，master模式输入由chassis_apply_master_motion直接给定
+    // 仅遥控模式从 RC 通道读取；master 模式输入由 chassis_apply_master_motion 直接给定
     if (control_mode == remote_control && remote_mode == chassis_mode) {
         chassis->param.Accel = ACCEL;
         chassis->param.Vw_in = LR_TRANSLATION;
         chassis->param.Vy_in = FB_TRANSLATION;
         chassis->param.Vx_in = ROTATION;
     }
+
+    chassis_yaw_corr_apply(chassis, gyro[2]);
     
     chassis->param.V_out[0] = chassis->param.Vx_in + chassis->param.Vy_in + chassis->param.Vw_in;
     chassis->param.V_out[1] = chassis->param.Vx_in - chassis->param.Vy_in + chassis->param.Vw_in;
@@ -194,7 +218,7 @@ void Chassis_Stop(Chassis_Module *chassis)
     chassis->param.V_out[2] = 0.0f;
     chassis->param.V_out[3] = 0.0f;
 
-    // 3. PID输出清零，防止残留
+    // 3. PID 输出清零，防止残留
     chassis_motor1.pid_spd.Output = 0.0f;
     chassis_motor2.pid_spd.Output = 0.0f;
     chassis_motor3.pid_spd.Output = 0.0f;

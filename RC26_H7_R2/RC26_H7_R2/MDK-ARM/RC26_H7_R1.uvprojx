@@ -1207,6 +1207,11 @@
               <FileType>1</FileType>
               <FilePath>..\user\src\pid.c</FilePath>
             </File>
+            <File>
+              <FileName>chassis_yaw_correction.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user\src\chassis_yaw_correction.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
