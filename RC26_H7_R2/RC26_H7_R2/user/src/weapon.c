@@ -129,7 +129,7 @@ void servo_use(void)
 
     if (servo_state %2==0)
     {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,1120); // 中间位置1400
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,1100); // 中间位置1400
     }
     else
     {
