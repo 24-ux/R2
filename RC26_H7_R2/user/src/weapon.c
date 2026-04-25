@@ -17,8 +17,8 @@ uint8_t sucker4_state = 0;     // 吸盘4开合（PE1）
 // uint8_t pump1_state = 0;     // 泵1开合（PC12）
 // uint8_t pump2_state = 0;     // 泵2开合（PE14）
 
-uint8_t ab;
-uint8_t ac;
+uint8_t switch_state;//光电开关（PE9）
+
 // 消抖锁
 uint8_t ch5_lock = 0;
 
@@ -119,6 +119,7 @@ void manual_weapon_function(void)
   */
 void servo_use(void)
 {
+	
     if (RCctrl.CH5 ==192 && ch5_lock == 0)
     {
         servo_state ^= 1; // 反转
@@ -145,9 +146,10 @@ void servo_use(void)
 
 void clamp_use(void)
 {
-    	ab=HAL_GPIO_ReadPin (GPIOA,GPIO_PIN_1);
-	ac=HAL_GPIO_ReadPin (GPIOE,GPIO_PIN_0);
-	if(ac==0)
+  switch_state =HAL_GPIO_ReadPin (GPIOE,GPIO_PIN_9);
+
+	if(switch_state ==1
+		)
 	{
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
 	}
@@ -157,20 +159,6 @@ void clamp_use(void)
 	}
 	
 }
-//    // 读取 PE0
-//     pe0_state = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0);
-
-//    // 检测到物体（PE0 低电平）→ PC10 输出低电平
-//    if(pe0_state == GPIO_PIN_RESET)
-//    {
-//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
-//    }
-//    else  // 没检测到物体 → PC10 高电平
-//    {
-//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
-//    }
-//}
-
 
 					
 //    if (RCctrl.CH5 ==192 && ch5_lock == 0)

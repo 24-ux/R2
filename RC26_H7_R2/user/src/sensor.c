@@ -11,13 +11,7 @@ static UART_HandleTypeDef *huart10_ptr;
 // 每个串口独立的接收字节
 static uint8_t u7_rx;
 static uint8_t u10_rx;
-uint8_t state;
 
-//uint8_t Read_PE0_State(void)
-//{
-//    GPIO_PinState state = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_0);
-//    return (state == GPIO_PIN_SET) ? 1 : 0;
-//}
 
 // 解析函数
 static void parse_byte(uint8_t byte, Laser_t *laser) {
