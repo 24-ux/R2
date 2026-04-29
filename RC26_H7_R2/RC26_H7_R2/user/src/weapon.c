@@ -17,7 +17,6 @@ uint8_t sucker4_state = 0;     // 吸盘4开合（PE1）
 // uint8_t pump1_state = 0;     // 泵1开合（PC12）
 // uint8_t pump2_state = 0;     // 泵2开合（PE14）
 
-uint16_t switch_state;//光电开关（PE9）
 // 消抖锁
 uint8_t ch5_lock = 0;
 
@@ -134,7 +133,7 @@ void servo_use(void)
     }
     else
     {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2100); //直立位置2100
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,2100 ); //直立位置2100
     }
 }
 
@@ -143,33 +142,24 @@ void servo_use(void)
   */
 void clamp_use(void)
 {
-	switch_state=HAL_GPIO_ReadPin(GPIOE ,GPIO_PIN_9); 
-	if(switch_state ==1)
-	{
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	else 
-	{
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
-	}
-//    if (RCctrl.CH5 ==192 && ch5_lock == 0)
-//    {
-//        clamp_state ^= 1; // 反转
-//        ch5_lock = 1;
-//    }
-//    if (RCctrl.CH5 !=192)
-//    {
-//        ch5_lock = 0;
-//    }
+    if (RCctrl.CH5 ==192 && ch5_lock == 0)
+    {
+        clamp_state ^= 1; // 反转
+        ch5_lock = 1;
+    }
+    if (RCctrl.CH5 !=192)
+    {
+        ch5_lock = 0;
+    }
 
-//    if (clamp_state %2== 0)
-//    {
-//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
-//    }
-//    else
-//    {
-//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
-//    }
+    if (clamp_state %2== 0)
+    {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+    }
+    else
+    {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+    }
 }
 
 /**
