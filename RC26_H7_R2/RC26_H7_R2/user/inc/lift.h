@@ -82,6 +82,34 @@ extern DJI_MotorModule flexible_motor2;  // （右）
 
 extern int    lift_stop_mode ;     // 记录是上升停还是下降停，用于给刹车力矩
 
+/* 调试快照：用于在Watch里稳定观测lift与流程状态 */
+typedef struct
+{
+    volatile uint32_t enable;      /* 0=关；非0=开 */
+    volatile uint32_t seq;         /* 每次刷新+1 */
+    volatile uint32_t tick_ms;     /* HAL_GetTick() */
+
+    volatile uint32_t control_mode;
+    volatile uint32_t semi_auto_mode;
+    volatile uint32_t upstairs_step;
+    volatile uint32_t downstairs_step;
+
+    volatile uint32_t r2_lift_mode;
+    volatile uint32_t lift_has_stopped;
+    volatile uint32_t lift_running;
+    volatile int32_t  lift_stop_mode;
+    volatile uint32_t lift_fall_fast;
+    volatile uint32_t lift_rise_fast;
+
+    volatile float left_speed_w;
+    volatile float right_speed_w;
+
+    volatile float left_hold_torque_cmd;
+    volatile float right_hold_torque_cmd;
+} LiftDebugSnapshot;
+
+extern volatile LiftDebugSnapshot g_lift_dbg;
+
 
 
 // extern Flexible_motor_state flexible_motor_state;

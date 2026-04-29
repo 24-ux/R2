@@ -26,6 +26,33 @@ static uint8_t lift_running = 0;
 int    lift_stop_mode  = 0;     // 记录是上升停还是下降停，用于给刹车力矩
 uint8_t lift_fall_fast = 0;
 uint8_t lift_rise_fast = 0;
+volatile LiftDebugSnapshot g_lift_dbg = {1U};
+
+static float s_left_hold_torque_cmd = 0.0f;
+static float s_right_hold_torque_cmd = 0.0f;
+
+static void lift_debug_snapshot(void)
+{
+	if (g_lift_dbg.enable == 0U) return;
+
+	g_lift_dbg.seq++;
+	g_lift_dbg.tick_ms = HAL_GetTick();
+
+	g_lift_dbg.control_mode = (uint32_t)control_mode;
+
+	g_lift_dbg.r2_lift_mode = (uint32_t)r2_lift_mode;
+	g_lift_dbg.lift_has_stopped = (uint32_t)lift_has_stopped;
+	g_lift_dbg.lift_running = (uint32_t)lift_running;
+	g_lift_dbg.lift_stop_mode = (int32_t)lift_stop_mode;
+	g_lift_dbg.lift_fall_fast = (uint32_t)lift_fall_fast;
+	g_lift_dbg.lift_rise_fast = (uint32_t)lift_rise_fast;
+
+	g_lift_dbg.left_speed_w = R2_lift_motor_left.speed_w;
+	g_lift_dbg.right_speed_w = R2_lift_motor_right.speed_w;
+
+	g_lift_dbg.left_hold_torque_cmd = s_left_hold_torque_cmd;
+	g_lift_dbg.right_hold_torque_cmd = s_right_hold_torque_cmd;
+}
 
 
 //活动电机状态
@@ -203,15 +230,21 @@ void manual_lift_function(void)
 	// 已经触底/触顶停止 → 输出刹车力矩，不掉落
 	  if(lift_has_stopped)
 	{
+		s_left_hold_torque_cmd = 0.0f;
+		s_right_hold_torque_cmd = 0.0f;
 		
 		if(lift_stop_mode == fall)
 		{
 			// 上升到顶：给微小向下力矩顶住不下滑
+				s_left_hold_torque_cmd = -0.5f;
+				s_right_hold_torque_cmd = 0.8f;
 				R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, 0, 0, 0.5f,  -0.5f);
 				R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 0, 0, 0.5f, 0.8f);
 		}
 		else if(lift_stop_mode == raise)
 		{
+				s_left_hold_torque_cmd = 1.9f;
+				s_right_hold_torque_cmd = -2.8f;
 				R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, 0, 0, 0.5f, 1.9f);
 				R2_lift_motor_right.set_mit_data(&R2_lift_motor_right,0, 0, 0, 0.5f,  -2.8f);
 		}
@@ -220,6 +253,8 @@ void manual_lift_function(void)
 	// 正常运行
 	else if(r2_lift_mode == fall)
 	{
+		s_left_hold_torque_cmd = 0.0f;
+		s_right_hold_torque_cmd = 0.0f;
 		if (lift_fall_fast == 0)
 		{
 			R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0, -1.0f, 0, 0.30f, -1.1f);
@@ -249,6 +284,8 @@ void manual_lift_function(void)
 	}
 	else if(r2_lift_mode == raise)
 	{
+		s_left_hold_torque_cmd = 0.0f;
+		s_right_hold_torque_cmd = 0.0f;
 		if (lift_rise_fast == 0U)
 		{
 			R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0,  2.2f, 0, 0.15f,  3.6f);
@@ -275,6 +312,8 @@ void manual_lift_function(void)
 				lift_rise_fast = 0;
 		}
 	}
+
+	lift_debug_snapshot();
 }
 
 
