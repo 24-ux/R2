@@ -6,8 +6,7 @@
 
 typedef enum {
     CLAMP_HEAD_IDLE,
-    CLAMP_HEAD_WAIT_CLOSE,
-    CLAMP_HEAD_WAIT_DELAY
+    CLAMP_HEAD_WAIT_CLOSE
 } ClampHeadState;
 
 void clamp_head_init(void);

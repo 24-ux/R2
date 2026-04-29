@@ -5,6 +5,7 @@
 #include "Sensor_Task.h"
 #include "chassis_heading_hold.h"
 #include <math.h>
+#include "clamp_head.h"
 
 Chassis_Module Chassis;
 
@@ -19,7 +20,7 @@ DJI_MotorModule chassis_motor4;  // 右后
 DJI_MotorModule guide_motor1;  // 左
 DJI_MotorModule guide_motor2;  // 右
  
-uint16_t switch_state;//光电开关（PE9）
+//uint16_t switch_state;//光电开关（PE9）
 
 
 /* 当前底盘指令缓存（用于将位定义转换为速度输入） */
@@ -119,15 +120,7 @@ float guide_motor2_pid_param[PID_PARAMETER_NUM] = {5.0f,0.1f,0.2f,1,500.0f,10000
   */
 void manual_chassis_function(void)
 {   
-		switch_state=HAL_GPIO_ReadPin(GPIOE ,GPIO_PIN_9); 
-	if(switch_state ==1)
-	{
-		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	else 
-	{
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
-	}
+				  clamp_head_auto_process();//自动夹枪头
     static MasterLevelGate master_chassis_flex_gate = {0U, 0U};
 
     /* 主控模式：按上位机动作字节解码并写入底盘输入 */

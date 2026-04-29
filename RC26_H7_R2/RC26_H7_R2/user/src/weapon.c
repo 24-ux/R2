@@ -6,7 +6,6 @@
 #include "chassis.h"
 
 
-
 // 状态标志
 uint8_t servo_state = 1;    // 舵机状态
 uint8_t clamp_state = 0;     // 夹爪开合（PC10）
@@ -73,14 +72,15 @@ void manual_weapon_function(void)
     /* 遥控模式：保持原手动逻辑 */
     else if(control_mode == remote_control)
     {
-        if (RCctrl.CH3==1792)
-        {
-        servo_use();
-        }
-        if (RCctrl.CH3==192)
-        {
-        clamp_use();
-        }
+//        if (RCctrl.CH3==1792)
+//        {
+//        servo_use();
+//        }
+//        if (RCctrl.CH3<=500)
+//        {
+//        clamp_use();
+//				  clamp_head_auto_process();
+//        }
         if (RCctrl.CH2==1792)
         {
         sucker1_use();
@@ -112,55 +112,55 @@ void manual_weapon_function(void)
 
 
 
-/**
-* @brief 舵机控制
-  */
-void servo_use(void)
-{
-    if (RCctrl.CH5 ==192 && ch5_lock == 0)
-    {
-        servo_state ^= 1; // 反转
-        ch5_lock = 1;
-    }
-    if (RCctrl.CH5 !=192)
-    {
-        ch5_lock = 0;
-    }
+///**
+//* @brief 舵机控制
+//  */
+//void servo_use(void)
+//{
+//    if (RCctrl.CH5 ==192 && ch5_lock == 0)
+//    {
+//        servo_state ^= 1; // 反转
+//        ch5_lock = 1;
+//    }
+//    if (RCctrl.CH5 !=192)
+//    {
+//        ch5_lock = 0;
+//    }
 
-    if (servo_state %2==0)
-    {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,1100); // 中间位置1400
-    }
-    else
-    {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,2100 ); //直立位置2100
-    }
-}
+//    if (servo_state %2==0)
+//    {
+//        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,1100); // 中间位置1400
+//    }
+//    else
+//    {
+//        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,2100 ); //直立位置2100
+//    }
+//}
 
-/**
-  * @brief 夹爪开合（PC10）
-  */
-void clamp_use(void)
-{
-    if (RCctrl.CH5 ==192 && ch5_lock == 0)
-    {
-        clamp_state ^= 1; // 反转
-        ch5_lock = 1;
-    }
-    if (RCctrl.CH5 !=192)
-    {
-        ch5_lock = 0;
-    }
+///**
+//  * @brief 夹爪开合（PC10）
+//  */
+//void clamp_use(void)
+//{
+//    if (RCctrl.CH5 ==192 && ch5_lock == 0)
+//    {
+//        clamp_state ^= 1; // 反转
+//        ch5_lock = 1;
+//    }
+//    if (RCctrl.CH5 !=192)
+//    {
+//        ch5_lock = 0;
+//    }
 
-    if (clamp_state %2== 0)
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
-    }
-    else
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
-    }
-}
+//    if (clamp_state %2== 0)
+//    {
+//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+//    }
+//    else
+//    {
+//        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+//    }
+//}
 
 /**
   * @brief 吸盘1（PC11）
