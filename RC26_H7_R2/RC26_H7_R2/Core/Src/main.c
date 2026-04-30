@@ -37,6 +37,7 @@
 #include "kfs.h"
 #include "weapon.h"
 #include "sensor.h"
+#include "bsp_can_tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -115,14 +116,15 @@ int main(void)
   MX_USART10_UART_Init();
   MX_UART9_Init();
   MX_USART2_UART_Init();
+  MX_TIM3_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   BSP_CAN_Init();
   BSP_USART_Init();
 	HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1 );
   HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3 );
-	HAL_TIM_Base_Start(&htim4);
-	HAL_TIM_Base_Start_IT(&htim4);
+  BSP_CAN_Tim_Init();  /* 初始化CAN定时器 */
   HAL_Delay(1500);
   Structue_Init();
   lift_init();
@@ -262,7 +264,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  
+  /* 三路CAN定时发送标志位 */
+  if (htim->Instance == TIM3)
+  {
+    can1_send_flag = 1;  /* TIM3 → FDCAN1 */
+  }
+  if (htim->Instance == TIM4)
+  {
+    can2_send_flag = 1;  /* TIM4 → FDCAN2 */
+  }
+  if (htim->Instance == TIM5)
+  {
+    can3_send_flag = 1;  /* TIM5 → FDCAN3 */
+  }
+  
   /* USER CODE END Callback 1 */
 }
 

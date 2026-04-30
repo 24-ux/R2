@@ -914,6 +914,11 @@
               <FileType>1</FileType>
               <FilePath>..\user\src\bsp_uart.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_can_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\user\src\bsp_can_tim.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
