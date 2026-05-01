@@ -46,11 +46,20 @@ typedef struct _DM_MotorModule{
 	uint16_t	angle_buf[FILTER_BUF_LEN];
 	uint16_t	fited_angle;
 	uint32_t	msg_cnt;
+	
+	// 数据缓冲字段（用于定时器发送）
+	float		buf_position;
+	float		buf_velocity;
+	float		buf_KP;
+	float		buf_KD;
+	float		buf_torque;
+	uint8_t		buf_tx_data[8];
     
     HAL_StatusTypeDef (*send_cmd)(struct _DM_MotorModule *obj,Motor_CMD CMD);
     void (*get_motor_measure)(struct _DM_MotorModule *obj, uint8_t rx_data[8]);
 	HAL_StatusTypeDef (*set_mit_data)(struct _DM_MotorModule *obj, float Position, float Velocity, float KP, float KD, float Torque);
     HAL_StatusTypeDef (*set_posvel_data)(struct _DM_MotorModule *obj, float Position, float Velocity);
+	HAL_StatusTypeDef (*send_mit_data)(struct _DM_MotorModule *obj);
 }DM_MotorModule;
 
 
@@ -63,5 +72,6 @@ void DMmotor_Create (DM_MotorModule *obj, uint16_t command_id, uint16_t master_i
 HAL_StatusTypeDef DM_Motor_CMD(DM_MotorModule *obj,Motor_CMD CMD);
 void DMget_motor_measure(DM_MotorModule *obj, uint8_t rx_data[8]);
 HAL_StatusTypeDef DMset_mit_data(DM_MotorModule *obj, float Position, float Velocity, float KP, float KD, float Torque);
+HAL_StatusTypeDef DMsend_mit_data(DM_MotorModule *obj);
 
 #endif

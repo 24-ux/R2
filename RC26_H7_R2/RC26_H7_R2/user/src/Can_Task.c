@@ -10,6 +10,7 @@
 #include "tim.h"
 #include "remote_control.h"
 #include "usart.h"
+#include "bsp_can_tim.h"
 void Can_Task(void const * argument)
 {
     // TickType_t Systick = 0;
@@ -25,7 +26,7 @@ void Can_Task(void const * argument)
 
         if (RCctrl.rc_lost != false)
         {
-            /* Ò£¿ØÁ´Â·¶ªÊ§£ºÈ«µç»ú¹Ø¶ÏÊä³ö */
+            /* Ò£ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½Ê§ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ */
             Chassis.Chassis_Stop(&Chassis);
             DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
             DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
@@ -46,7 +47,7 @@ void Can_Task(void const * argument)
 
         if (Motor_OverTempProtect_Update() != 0U)
         {
-            /* ¹ıÎÂ±£»¤£ºÈ«µç»úÊä³öÇåÁã²¢Ìø¹ı±¾ÖÜÆÚÒµÎñ¿ØÖÆ */
+            /* ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ */
             Chassis.Chassis_Stop(&Chassis);
             DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
             DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
@@ -95,7 +96,7 @@ void Can_Task(void const * argument)
             switch(control_mode)
             {
                 case master_control:
-                    /* ²¢ĞĞµ÷¶È£º¸÷Ä£¿é°´enableÎ»¶ÀÁ¢ÔËĞĞ£¬¿ÉÍ¬Ê±ÉúĞ§ */
+                    /* ï¿½ï¿½ï¿½Ğµï¿½ï¿½È£ï¿½ï¿½ï¿½Ä£ï¿½é°´enableÎ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½Ğ§ */
                     if ((master_enable_bits & MASTER_EN_CHASSIS) != 0U)
                     {
                         manual_chassis_function();
@@ -114,20 +115,20 @@ void Can_Task(void const * argument)
                     }
                     break;
                 case emergency_stop_mode:
-                    /* ¼±Í£Ä£Ê½£ºÖ÷¶¯ÇåÁãËùÓĞÊä³ö£¬±ÜÃâ²ĞÁôÃüÁî¼ÌĞøÇı¶¯ */
+                    /* ï¿½ï¿½Í£Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
                     Chassis.Chassis_Stop(&Chassis);
                     DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
                     DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
                     DJIset_motor_data(&hfdcan3, 0X200, 0, 0, 0, 0);
 
-                    /* DMµç»ú£¨MIT£©ÇåÁã£ºkp/kd/torqueÈ«0 */
+                    /* DMï¿½ï¿½ï¿½ï¿½ï¿½MITï¿½ï¿½ï¿½ï¿½ï¿½ã£ºkp/kd/torqueÈ«0 */
                     R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     R2_lift_motor_right.set_mit_data(&R2_lift_motor_right, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     main_lift.set_mit_data(&main_lift, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     kfs_spin.set_mit_data(&kfs_spin, 0.0f, 0.9f, 0.3f, 0.4f, 0.0f);
                     three_kfs.set_mit_data(&three_kfs, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-                    /* ¼±Í£Ê±½«weaponÏà¹ØÖ´ĞĞÆ÷À­»Ø³õÊ¼»¯µçÆ½ */
+                    /* ï¿½ï¿½Í£Ê±ï¿½ï¿½weaponï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Æ½ */
                     servo_state = 1U;
                     clamp_state = 0U;
                     sucker1_state = 0U;
@@ -137,38 +138,38 @@ void Can_Task(void const * argument)
 //                    pump1_state = 0U;
 //                    pump2_state = 0U;
 
-                    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2100);            /* ¶æ»ú³õÊ¼»¯Î» */
-                    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);           /* ¼Ğ×¦³õÊ¼»¯µçÆ½ */
-//                    pump1_two_suckers_linkage_nominal_open(0U, 0U);                /* ÎüÅÌ1/2Óë±Ã1³õÊ¼»¯ */
-//                    pump2_two_suckers_linkage_nominal_open(0U, 0U);                /* ÎüÅÌ3/4Óë±Ã2³õÊ¼»¯ */
+                    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2100);            /* ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Î» */
+                    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);           /* ï¿½ï¿½×¦ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Æ½ */
+//                    pump1_two_suckers_linkage_nominal_open(0U, 0U);                /* ï¿½ï¿½ï¿½ï¿½1/2ï¿½ï¿½ï¿½1ï¿½ï¿½Ê¼ï¿½ï¿½ */
+//                    pump2_two_suckers_linkage_nominal_open(0U, 0U);                /* ï¿½ï¿½ï¿½ï¿½3/4ï¿½ï¿½ï¿½2ï¿½ï¿½Ê¼ï¿½ï¿½ */
                     break;
                 case remote_control:
-									switch (remote_mode)
-									{
-										case chassis_mode:
-											manual_chassis_function();
-										break;
-										
-										case weapon_mode:
-											manual_weapon_function();
-										break;
-										
-										case lift_mode:
-											Chassis.Chassis_Stop(&Chassis);
-										   // Ö±½Ó·¢0£¬É²ËÀ£¡
-											DJIset_motor_data(&hfdcan1, 0x200, 0,0,0,0);
-											manual_lift_function();
-										break;
-										case kfs_mode:
-											Chassis.Chassis_Stop(&Chassis);
-										   // Ö±½Ó·¢0£¬É²ËÀ£¡
-											DJIset_motor_data(&hfdcan1, 0x200, 0,0,0,0);
-											manual_kfs_function();
-										break;
-										case remote_none:
-										break;
-									}
-                break;
+                    switch (remote_mode)
+                    {
+                        case chassis_mode:
+                            manual_chassis_function();
+                            break;
+                        
+                        case weapon_mode:
+                            manual_weapon_function();
+                            break;
+                        
+                        case lift_mode:
+                            Chassis.Chassis_Stop(&Chassis);
+                            // Ö±ï¿½Ó·ï¿½0ï¿½ï¿½É²ï¿½ï¿½ï¿½ï¿½
+                            DJIset_motor_data(&hfdcan1, 0x200, 0, 0, 0, 0);
+                            manual_lift_function();
+                            break;
+                        case kfs_mode:
+                            Chassis.Chassis_Stop(&Chassis);
+                            // Ö±ï¿½Ó·ï¿½0ï¿½ï¿½É²ï¿½ï¿½ï¿½ï¿½
+                            DJIset_motor_data(&hfdcan1, 0x200, 0, 0, 0, 0);
+                            manual_kfs_function();
+                            break;
+                        case remote_none:
+                            break;
+                    }
+                    break;
             }
 
 //			if(Systick % 10 == 0){	
@@ -185,7 +186,42 @@ void Can_Task(void const * argument)
         can2_free_level = HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan2);
 		    can3_free_level = HAL_FDCAN_GetTxFifoFreeLevel(&hfdcan3);
 
-		osDelay(3);
+        if (can1_send_flag)
+        {
+            can1_send_flag = 0;
+            DJIset_motor_data(&hfdcan1, 0X200, 
+                chassis_motor1.pid_spd.Output, 
+                chassis_motor2.pid_spd.Output,
+                chassis_motor3.pid_spd.Output, 
+                chassis_motor4.pid_spd.Output);
+			// DMç”µæœºå‘é€ï¼ˆFDCAN1ï¼‰
+			R2_lift_motor_left.send_mit_data(&R2_lift_motor_left);
+			R2_lift_motor_right.send_mit_data(&R2_lift_motor_right);
+        }
+        if (can2_send_flag)
+        {
+            can2_send_flag = 0;
+            DJIset_motor_data(&hfdcan2, 0X200, 
+                guide_motor1.pid_spd.Output, 
+                guide_motor2.pid_spd.Output,
+                flexible_motor1.pid_spd.Output, 
+                flexible_motor2.pid_spd.Output);
+			// DMç”µæœºå‘é€ï¼ˆFDCAN2ï¼‰
+			main_lift.send_mit_data(&main_lift);
+        }
+        if (can3_send_flag)
+        {
+            can3_send_flag = 0;
+            DJIset_motor_data(&hfdcan3, 0X200, 
+                kfs_above.pid_spd.Output, 
+                kfs_below.pid_spd.Output,
+                0, 0);
+			// DMç”µæœºå‘é€ï¼ˆFDCAN3ï¼‰
+			kfs_spin.send_mit_data(&kfs_spin);
+			three_kfs.send_mit_data(&three_kfs);
+        }
+
+		osDelay(1);
     }
 
 }
