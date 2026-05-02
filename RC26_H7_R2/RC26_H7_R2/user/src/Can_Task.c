@@ -26,7 +26,7 @@ void Can_Task(void const * argument)
 
         if (RCctrl.rc_lost != false)
         {
-            /* ң����·��ʧ��ȫ����ض���� */
+            /* 遥控链路丢失：全电机关断输出 */
             Chassis.Chassis_Stop(&Chassis);
             DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
             DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
@@ -47,7 +47,7 @@ void Can_Task(void const * argument)
 
         if (Motor_OverTempProtect_Update() != 0U)
         {
-            /* ���±�����ȫ���������㲢����������ҵ����� */
+             /* 过温保护：全电机输出清零并跳过本周期业务控制 */
             Chassis.Chassis_Stop(&Chassis);
             DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
             DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
@@ -96,7 +96,7 @@ void Can_Task(void const * argument)
             switch(control_mode)
             {
                 case master_control:
-                    /* ���е��ȣ���ģ�鰴enableλ�������У���ͬʱ��Ч */
+                   /* 并行调度：各模块按enable位独立运行，可同时生效 */
                     if ((master_enable_bits & MASTER_EN_CHASSIS) != 0U)
                     {
                         manual_chassis_function();
@@ -115,20 +115,20 @@ void Can_Task(void const * argument)
                     }
                     break;
                 case emergency_stop_mode:
-                    /* ��ͣģʽ������������������������������������� */
+                    /* 急停模式：主动清零所有输出，避免残留命令继续驱动 */
                     Chassis.Chassis_Stop(&Chassis);
                     DJIset_motor_data(&hfdcan1, 0X200, 0, 0, 0, 0);
                     DJIset_motor_data(&hfdcan2, 0X200, 0, 0, 0, 0);
                     DJIset_motor_data(&hfdcan3, 0X200, 0, 0, 0, 0);
 
-                    /* DM�����MIT�����㣺kp/kd/torqueȫ0 */
+                    /* DM电机（MIT）清零：kp/kd/torque全0 */
                     R2_lift_motor_left.set_mit_data(&R2_lift_motor_left, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     R2_lift_motor_right.set_mit_data(&R2_lift_motor_right, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     main_lift.set_mit_data(&main_lift, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
                     kfs_spin.set_mit_data(&kfs_spin, 0.0f, 0.9f, 0.3f, 0.4f, 0.0f);
                     three_kfs.set_mit_data(&three_kfs, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-                    /* ��ͣʱ��weapon���ִ�������س�ʼ����ƽ */
+                    /* 急停时将weapon相关执行器拉回初始化电平 */
                     servo_state = 1U;
                     clamp_state = 0U;
                     sucker1_state = 0U;
@@ -156,13 +156,13 @@ void Can_Task(void const * argument)
                         
                         case lift_mode:
                             Chassis.Chassis_Stop(&Chassis);
-                            // ֱ�ӷ�0��ɲ����
+                            // 直接发0，刹死！
                             DJIset_motor_data(&hfdcan1, 0x200, 0, 0, 0, 0);
                             manual_lift_function();
                             break;
                         case kfs_mode:
                             Chassis.Chassis_Stop(&Chassis);
-                            // ֱ�ӷ�0��ɲ����
+                            // 直接发0，刹死！
                             DJIset_motor_data(&hfdcan1, 0x200, 0, 0, 0, 0);
                             manual_kfs_function();
                             break;
