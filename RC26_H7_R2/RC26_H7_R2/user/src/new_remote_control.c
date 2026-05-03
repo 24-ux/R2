@@ -1,39 +1,64 @@
 /**
- * @file    upper_pc_protocol.c
- * @brief   R2 串口协议解析 — STM32 端实现（工程内文件名：上位机协议）
+ * @file    new_remote_control.c
+ * @brief   R2 机器人通信协议 - STM32 端实现
  *
- * 用法:
- *   1. rc_init(uart1_putc, HAL_GetTick);
+ * ===================== 使用方法 =====================
+ *   1. 调用 rc_init_with_uart(&huart10); 初始化（推荐）
+ *      或调用 rc_init(uart1_putc, HAL_GetTick); 初始化（自定义方式）
  *   2. 注册回调: rc_set_odom_callback(my_odom_handler);
- *   3. UART RX 中断中: rc_feed_byte(rx_data);
- *   4. 主循环:   rc_poll();
+ *   3. 主循环中调用: rc_poll();
  */
-#include "upper_pc_protocol.h"
+#include "new_remote_control.h"
 #include <string.h>
 
-/* ---------- 内部状态 ---------- */
+/* ==================== 内部状态变量 ==================== */
+
+/** UART发送函数指针（初始化时传入） */
 static void  (*uart_send)(uint8_t byte) = NULL;
+
+/** 获取毫秒数函数指针（初始化时传入） */
 static uint32_t (*get_ms)(void) = NULL;
 
-volatile static rc_odom_t  latest_odom;
+/** UART句柄指针（用于rc_init_with_uart） */
+UART_HandleTypeDef *huart_ptr = NULL;
+
+/** UART接收缓存（用于rc_init_with_uart - USART10） */
+uint8_t uart_rx_byte = 0;
+
+/** 最近一次收到的里程计数据 */
+static rc_odom_t  latest_odom;
+
+/** 里程计数据更新时间戳（毫秒） */
 static uint32_t   odom_last_ms = 0;
+
+/** 里程计数据超时时间（毫秒），超过此时间未更新则认为数据无效 */
 #define ODOM_TIMEOUT_MS  2000
 
+/* ==================== 回调函数指针 ==================== */
 static rc_odom_callback_t          cb_odom = NULL;
 static rc_path_callback_t          cb_path = NULL;
 static rc_kfs_callback_t           cb_kfs  = NULL;
 static rc_zone_i_path_callback_t   cb_zone_i_path = NULL;
 
-/* 接收缓冲区 */
+/* ==================== 接收缓冲区 ==================== */
+/** 接收数据缓冲区 */
 static uint8_t  rx_buf[RC_FRAME_MAX_SIZE];
-static uint16_t rx_idx = 0;
-static uint8_t  rx_sync = 0;  /* 0=找同步 1=找到 SYNC1 2=找到 SYNC2 */
 
-/* 临时解析缓冲区 */
+/** 当前接收位置索引 */
+static uint16_t rx_idx = 0;
+
+/**
+ * @brief 接收同步状态机
+ * @note  0=未同步, 1=已找到SYNC1, 2=已找到SYNC2
+ */
+static uint8_t  rx_sync = 0;
+
+/* ==================== 发送缓冲区 ==================== */
+/** 发送数据缓冲区（用于构造发送帧） */
 static uint8_t  payload[RC_FRAME_MAX_PAYLOAD];
 
-/* ---------- 内部函数 ---------- */
-//异或校验
+/* ==================== 内部辅助函数 ==================== */
+
 static uint8_t calc_chk(uint8_t cmd, const uint8_t *data, uint16_t len)
 {
     uint8_t chk = cmd;
@@ -44,7 +69,6 @@ static uint8_t calc_chk(uint8_t cmd, const uint8_t *data, uint16_t len)
     return chk;
 }
 
-//发送帧函数（单帧发送）
 static void send_frame(uint8_t cmd, const uint8_t *data, uint16_t len)
 {
     if (!uart_send) return;
@@ -59,7 +83,6 @@ static void send_frame(uint8_t cmd, const uint8_t *data, uint16_t len)
     uart_send(chk);
 }
 
-//小端浮点数转换
 static float unpack_float_le(const uint8_t *p)
 {
     union { float f; uint32_t u; } conv;
@@ -68,18 +91,8 @@ static float unpack_float_le(const uint8_t *p)
     return conv.f;
 }
 
-//小端浮点数打包
-static void pack_float_le(float f, uint8_t *out)
-{
-    union { float f; uint32_t u; } conv;
-    conv.f = f;
-    out[0] = (uint8_t)(conv.u & 0xFF);
-    out[1] = (uint8_t)((conv.u >> 8) & 0xFF);
-    out[2] = (uint8_t)((conv.u >> 16) & 0xFF);
-    out[3] = (uint8_t)((conv.u >> 24) & 0xFF);
-}
+/* ==================== 数据处理函数 ==================== */
 
-//里程计处理
 static void handle_odom(const uint8_t *data, uint16_t len)
 {
     if (len < RC_ODOM_PAYLOAD_SIZE) return;
@@ -93,7 +106,6 @@ static void handle_odom(const uint8_t *data, uint16_t len)
     if (cb_odom) cb_odom(&latest_odom);
 }
 
-//路径处理
 static void handle_path(const uint8_t *data, uint16_t len)
 {
     if (len < 1) return;
@@ -109,7 +121,6 @@ static void handle_path(const uint8_t *data, uint16_t len)
     if (cb_path) cb_path(&path);
 }
 
-//KFS处理
 static void handle_kfs(const uint8_t *data, uint16_t len)
 {
     if (len < 1) return;
@@ -126,7 +137,6 @@ static void handle_kfs(const uint8_t *data, uint16_t len)
     if (cb_kfs) cb_kfs(&kfs);
 }
 
-//I区路径处理
 static void handle_zone_i_path(const uint8_t *data, uint16_t len)
 {
     if (len < 3) return;
@@ -141,7 +151,6 @@ static void handle_zone_i_path(const uint8_t *data, uint16_t len)
     if (cb_zone_i_path) cb_zone_i_path(&zp);
 }
 
-//帧分发
 static void dispatch_frame(uint8_t cmd, const uint8_t *data, uint16_t len)
 {
     switch (cmd) {
@@ -153,7 +162,7 @@ static void dispatch_frame(uint8_t cmd, const uint8_t *data, uint16_t len)
     }
 }
 
-/* ---------- 公开 API ---------- */
+/* ==================== 外部接口函数实现 ==================== */
 
 void rc_init(void (*send_fn)(uint8_t byte), uint32_t (*ms_fn)(void))
 {
@@ -164,6 +173,24 @@ void rc_init(void (*send_fn)(uint8_t byte), uint32_t (*ms_fn)(void))
     rx_sync = 0;
 }
 
+static void rc_uart_send_wrapper(uint8_t byte)
+{
+    if (huart_ptr) {
+        HAL_UART_Transmit(huart_ptr, &byte, 1, HAL_MAX_DELAY);
+    }
+}
+
+void rc_init_with_uart(UART_HandleTypeDef *huart)
+{
+    huart_ptr = huart;
+    uart_send = rc_uart_send_wrapper;
+    get_ms = HAL_GetTick;
+    memset(&latest_odom, 0, sizeof(latest_odom));
+    rx_idx = 0;
+    rx_sync = 0;
+    HAL_UART_Receive_IT(huart_ptr, &uart_rx_byte, 1);
+}
+
 void rc_set_odom_callback(rc_odom_callback_t cb)           { cb_odom = cb; }
 void rc_set_path_callback(rc_path_callback_t cb)           { cb_path = cb; }
 void rc_set_kfs_callback(rc_kfs_callback_t cb)             { cb_kfs  = cb; }
@@ -172,19 +199,39 @@ void rc_set_zone_i_path_callback(rc_zone_i_path_callback_t cb) { cb_zone_i_path 
 void rc_feed_byte(uint8_t byte)
 {
     switch (rx_sync) {
+
     case 0:
-        if (byte == RC_SYNC1) { rx_buf[0] = byte; rx_idx = 1; rx_sync = 1; }
+        if (byte == RC_SYNC1) {
+            rx_buf[0] = byte;
+            rx_idx = 1;
+            rx_sync = 1;
+        }
         break;
+
     case 1:
-        if (byte == RC_SYNC2) { rx_buf[1] = byte; rx_idx = 2; rx_sync = 2; }
-        else { rx_sync = 0; if (byte == RC_SYNC1) { rx_buf[0] = byte; rx_idx = 1; rx_sync = 1; } }
+        if (byte == RC_SYNC2) {
+            rx_buf[1] = byte;
+            rx_idx = 2;
+            rx_sync = 2;
+        } else {
+            rx_sync = 0;
+            if (byte == RC_SYNC1) {
+                rx_buf[0] = byte;
+                rx_idx = 1;
+                rx_sync = 1;
+            }
+        }
         break;
+
     case 2:
         rx_buf[rx_idx++] = byte;
         if (rx_idx >= RC_FRAME_HEADER_SIZE) {
             uint8_t  cmd = rx_buf[2];
             uint16_t len = (uint16_t)rx_buf[3] | ((uint16_t)rx_buf[4] << 8);
-            if (len > RC_FRAME_MAX_PAYLOAD) { rx_sync = 0; break; }
+            if (len > RC_FRAME_MAX_PAYLOAD) {
+                rx_sync = 0;
+                break;
+            }
             uint16_t frame_size = RC_FRAME_HEADER_SIZE + len + 1;
             if (rx_idx >= frame_size) {
                 uint8_t chk = calc_chk(cmd, rx_buf + RC_FRAME_HEADER_SIZE, len);
@@ -200,7 +247,6 @@ void rc_feed_byte(uint8_t byte)
 
 void rc_poll(void)
 {
-    /* 可在主循环中扩展，如心跳检测 */
 }
 
 const rc_odom_t *rc_get_latest_odom(void)
@@ -214,7 +260,7 @@ uint8_t rc_odom_is_valid(void)
     return (get_ms() - odom_last_ms) < ODOM_TIMEOUT_MS;
 }
 
-/* ---------- 发送函数 ---------- */
+/* ==================== 发送函数实现 ==================== */
 
 void rc_send_ack(uint8_t cmd, uint8_t code)
 {

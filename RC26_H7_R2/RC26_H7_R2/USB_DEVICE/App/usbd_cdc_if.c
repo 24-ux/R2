@@ -23,7 +23,7 @@
 
 /* USER CODE BEGIN INCLUDE */
 #include "main.h"
-#include "upper_pc_protocol.h"
+#include "new_remote_control.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +63,7 @@
   */
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
-/* upper_pc_protocol (0xA5 0x5A) */
+/* 上位机协议帧：new_remote_control（0xA5 0x5A） */
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
@@ -97,7 +97,7 @@ uint8_t UserRxBufferHS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferHS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-static uint8_t upper_pc_tx_byte;
+static uint8_t rc_usb_tx_byte;
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -131,7 +131,7 @@ static int8_t CDC_Receive_HS(uint8_t* pbuf, uint32_t *Len);
 static int8_t CDC_TransmitCplt_HS(uint8_t *pbuf, uint32_t *Len, uint8_t epnum);
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
-static void upper_pc_usb_putc(uint8_t byte);
+static void rc_usb_putc(uint8_t byte);
 
 /* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */
 
@@ -160,7 +160,7 @@ static int8_t CDC_Init_HS(void)
   /* Set Application Buffers */
   USBD_CDC_SetTxBuffer(&hUsbDeviceHS, UserTxBufferHS, 0);
   USBD_CDC_SetRxBuffer(&hUsbDeviceHS, UserRxBufferHS);
-  rc_init(upper_pc_usb_putc, HAL_GetTick);
+  rc_init(rc_usb_putc, HAL_GetTick);
   return (USBD_OK);
   /* USER CODE END 8 */
 }
@@ -330,10 +330,10 @@ static int8_t CDC_TransmitCplt_HS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
-static void upper_pc_usb_putc(uint8_t byte)
+static void rc_usb_putc(uint8_t byte)
 {
-  upper_pc_tx_byte = byte;
-  (void)CDC_Transmit_HS(&upper_pc_tx_byte, 1);
+  rc_usb_tx_byte = byte;
+  (void)CDC_Transmit_HS(&rc_usb_tx_byte, 1);
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
